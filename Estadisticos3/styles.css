@@ -1,0 +1,598 @@
+/* Reutiliza íntegramente los estilos de Estadísticos 1. */
+@import url("../styles.css?v=20261005-11");
+
+@keyframes refresh-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Fecha de referencia restaurada y fecha actual como en Estadisticos 1 */
+
+.today-date {
+  margin-left: auto;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.today-date svg {
+  width: 18px;
+  height: 18px;
+  color: var(--brand);
+}
+
+@media (max-width: 760px) {
+  .today-date {
+    width: 100%;
+    margin-left: 0;
+    justify-content: flex-end;
+  }
+}
+
+/* Identificacion del periodo realmente cargado en tablas y graficos */
+
+.consultation-status strong {
+  margin-top: 2px;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+/* Ajuste del resumen de datos presentados */
+
+.consultation-status-label {
+  color: var(--muted, #64748b);
+  font-size: 10px;
+  font-weight: 600;
+  width: 100%;
+  text-align: left;
+}
+
+.consultation-status .status-field-label,
+.consultation-status .status-separator {
+  font-weight: 400 !important;
+}
+
+.consultation-status .status-field-value {
+  font-size: inherit;
+  font-weight: 800;
+}
+
+@media (max-width: 1050px) {
+  .consultation-status {
+    order: 3;
+    width: 100%;
+    max-width: none;
+    align-items: flex-start !important;
+  }
+}
+
+/* Encaje final de la tarjeta de datos presentados en la cabecera */
+.topbar-actions {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.consultation-status-label,
+.consultation-status-value {
+  overflow: hidden;
+  text-overflow: clip;
+}
+
+.topbar-actions #print, .topbar-actions .user-action{
+  flex: 0 0 auto;
+}
+
+/* Tarjeta de consulta mas ancha y ligeramente desplazada a la izquierda */
+
+/* Ancho dinamico definitivo de la tarjeta de consulta */
+
+/* Ancho exacto segun el contenido: Abril, Agosto o Septiembre */
+.consultation-status {
+  min-height: 42px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  background: var(--panel, #fff);
+  color: var(--text);
+  line-height: 1.2;
+  white-space: nowrap;
+  align-items: flex-start !important;
+  text-align: left !important;
+  box-sizing: border-box;
+  overflow: visible;
+  width: max-content !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  margin-left: -12px !important;
+  padding: 6px 10px !important;
+  flex: 0 0 auto !important;
+}
+
+.consultation-status-value {
+  margin-top: 2px;
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-start;
+  gap: 3px;
+  font-size: 10.5px;
+  letter-spacing: -0.08px;
+  width: max-content !important;
+  min-width: 0 !important;
+  white-space: nowrap !important;
+}
+
+@media (max-width: 1180px) {
+  .topbar {
+    flex-wrap: wrap;
+  }
+
+  .topbar-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+  .consultation-status {
+    flex: 0 1 auto;
+    width: max-content !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    margin-left: 0 !important;
+  }
+
+  .consultation-status-value {
+    min-width: 0;
+    width: auto !important;
+    white-space: normal !important;
+  }
+}
+
+/* Estadisticos 3: conserva menus y cabecera de Estadisticos 2 */
+.statistics3-status {
+  width: max-content !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  margin-left: 0 !important;
+}
+
+.statistics3-status .consultation-status-value {
+  width: max-content !important;
+  min-width: 0 !important;
+  font-weight: 400;
+}
+
+.statistics3-status .status-field-label {
+  font-weight: 400;
+}
+
+.statistics3-status .status-field-value {
+  font-weight: 800;
+}
+
+.statistics3-filters label {
+  display: grid;
+  grid-template-columns: 82px minmax(180px, 220px);
+  align-items: center;
+  gap: 10px;
+}
+
+.statistics3-filters select,
+.statistics3-filters input[type="month"] {
+  width: 100%;
+  min-width: 180px;
+  height: 44px;
+  padding: 0 12px;
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  background: var(--bg);
+  color: var(--text);
+  font: 700 12px Inter, sans-serif;
+  outline: none;
+}
+
+.statistics3-filters input:disabled {
+  opacity: .72;
+  cursor: default;
+}
+
+.statistics3-grid {
+  margin-top: 18px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.statistics3-grid>.chart-card {
+  min-width: 0;
+  width: 100%;
+  padding: 0;
+  overflow: hidden;
+}
+
+.statistics3-chart-title {
+  padding: 11px 14px;
+  text-align: center;
+  background: #eaf2ff;
+  color: #123f73;
+  font-size: 15px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.statistics3-grid>.chart-card:nth-child(2) .statistics3-chart-title {
+  background: #eaf7ef;
+}
+
+.statistics3-grid>.chart-card:nth-child(3) .statistics3-chart-title {
+  background: #fff3df;
+}
+
+.statistics3-grid>.chart-card:nth-child(4) .statistics3-chart-title {
+  background: #f1edff;
+}
+
+.statistics3-chart {
+  height: 355px;
+  padding: 12px 14px 8px;
+}
+
+@media(max-width:1100px) {
+  .statistics3-grid {
+    grid-template-columns: 1fr
+  ;}
+
+  .statistics3-filters label {
+    grid-template-columns: 1fr
+  ;}
+
+  .statistics3-filters .until-label small {
+    position: static;
+    grid-column: 1/-1
+  ;}
+
+  .statistics3-status {
+    max-width: 100% !important;}
+
+  .statistics3-status .consultation-status-value {
+    width: auto !important;
+    white-space: normal !important;}
+}
+
+/* Alineacion final de los filtros Desde y Hasta */
+.statistics3-filters .until-label {
+  position: static;
+  padding-bottom: 0;
+}
+
+.statistics3-filters .until-label small {
+  position: absolute;
+  left: 92px;
+  bottom: -1px;
+  color: var(--muted);
+  font-size: 10px;
+  display: none;
+}
+
+/* Progreso visible durante la actualización */
+.update-progress {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(15, 35, 63, .28);
+  backdrop-filter: blur(3px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .18s ease, visibility .18s ease;
+}
+
+.update-progress.is-visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.update-progress-spinner {
+  width: 46px;
+  height: 46px;
+  margin: 0 auto 15px;
+  border: 4px solid #dbeafe;
+  border-top-color: var(--brand);
+  border-radius: 50%;
+  animation: refresh-spin .8s linear infinite;
+}
+
+.update-progress-card h2 {
+  margin: 0 0 7px;
+  color: var(--text);
+  font-size: 20px;
+}
+
+.update-progress-card small {
+  color: #64748b;
+  font-size: 11px;
+}
+
+.header-action:disabled {
+  cursor: wait;
+  opacity: .62;
+}
+
+/* Barra de actividad continua: visible incluso durante calculos JavaScript sincronicos */
+.update-progress-card {
+  width: min(440px, 100%);
+  padding: 28px 30px 24px;
+  border: 1px solid #cbdcf0;
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 22px 55px rgba(15, 35, 63, .24);
+  text-align: center;
+  overflow: visible !important;
+}
+
+.update-progress-card>p {
+  margin: 0 0 20px;
+  color: var(--muted);
+  font-size: 13px;
+  min-height: 20px;
+  margin-bottom: 12px !important;
+}
+
+.update-progress-bar {
+  display: block !important;
+  position: relative;
+  width: 100%;
+  height: 9px !important;
+  margin: 0 0 18px !important;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #dbe7f5 !important;
+}
+
+.update-progress-bar span {
+  display: block;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -42%;
+  width: 42% !important;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #2563eb, #38bdf8, #2563eb) !important;
+  animation: update-progress-slide 1.15s ease-in-out infinite !important;
+  transition: none !important;
+}
+
+@keyframes update-progress-slide {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(340%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .update-progress-bar span {
+    animation-duration: 2.4s !important;
+  }
+}
+
+/* Las etapas se ocultan: la ventana muestra solo spinner, mensaje y barra */
+
+/* Distribución final de filtros de Estadísticos 3 */
+
+/* Alineacion definitiva de los filtros de Estadisticos 3.
+ * - Igual separacion entre Poblacion/Desde y fecha Desde/Hasta.
+ * - Igual separacion, mas compacta, entre cada etiqueta y su campo.
+ */
+
+/* Separacion interior uniforme entre etiqueta y selector */
+
+/* Huecos exteriores exactamente iguales entre Poblacion, Desde y Hasta */
+@media (min-width: 1101px) {
+
+  .statistics3-filters .start-label {
+    margin-right: -12px;
+  }
+
+  .statistics3-filters label,
+.statistics3-filters .population-label,
+.statistics3-filters .start-label,
+.statistics3-filters .until-label {
+    width: 100%;
+    margin: 0;
+    display: grid;
+    align-items: center;
+    column-gap: 8px;
+  }
+
+  .statistics3-filters .population-label {
+    margin-right: 30px;
+    grid-template-columns: 74px minmax(180px, 220px);
+  }
+
+  .statistics3-filters .start-label,
+.statistics3-filters .until-label {
+    grid-template-columns: 52px minmax(180px, 220px);
+  }
+  .statistics3-filters {
+    display: grid;
+    grid-template-columns:
+      max-content
+      max-content
+      max-content
+      max-content
+      minmax(0, 1fr);
+    align-items: center;
+    column-gap: 30px;
+  }
+
+  .statistics3-filters .population-label,
+.statistics3-filters .start-label,
+.statistics3-filters .until-label {
+    width: max-content;
+    margin: 0;
+    display: grid;
+    grid-template-columns: max-content 220px;
+    align-items: center;
+    column-gap: 20px;
+  }
+
+  .statistics3-filters select,
+.statistics3-filters input[type="month"] {
+    width: 220px;
+    min-width: 220px;
+  }
+
+  .statistics3-filters .today-date {
+    justify-self: end;
+  }
+}
+
+/* =========================================================
+   ESTADISTICOS 3 - GRAFICAS VISIBLES SIN SCROLL VERTICAL
+   Solo afecta a la visualizacion en pantalla.
+   ========================================================= */
+@media screen and (min-width: 1101px) {
+  .statistics3-grid {
+    margin-top: 12px;
+    gap: 12px 16px;
+  }
+
+  .statistics3-chart-title {
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+
+  .statistics3-chart {
+    height: 310px;
+    padding: 8px 12px 5px;
+  }
+}
+
+/* ===== IMPRESION CONSOLIDADA - ESTADISTICOS 3 ===== */
+@page {
+  size: A4 landscape;
+  margin: 0;
+}
+
+@media print {
+  /* Se imprime exclusivamente la cuadrícula de cuatro gráficas. */
+  .topbar,
+  .statistics3-filters,
+  #sidebar-component,
+  .overlay,
+  #openMenu,
+  #print,
+  #identityButton,
+  .update-progress,
+  #loading {
+    display: none !important;
+  }
+
+  /* Contenido de 277 mm centrado en la hoja (10 mm a cada lado). */
+  html {
+    width: auto !important;
+    height: 200mm !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    background: #fff !important;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  html body,
+  html body .app-shell,
+  html body main {
+    width: 277mm !important;
+    max-width: none !important;
+    height: 200mm !important;
+    min-height: 0 !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    background: #fff !important;
+  }
+
+  .statistics3-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    grid-template-rows: repeat(2, 75mm) !important;
+    gap: 4mm !important;
+    width: 277mm !important;
+    height: 154mm !important;
+    margin: 25mm 0 0 !important;
+    padding: 0 !important;
+    align-content: start !important;
+  }
+
+  .statistics3-grid > .chart-card {
+    width: 100% !important;
+    height: 75mm !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+    box-shadow: none !important;
+  }
+
+  .statistics3-chart-title {
+    height: 8mm !important;
+    min-height: 8mm !important;
+    padding: 1.5mm 2mm !important;
+    font-size: 8pt !important;
+    line-height: 5mm !important;
+  }
+
+  .statistics3-chart {
+    width: 100% !important;
+    height: 67mm !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 1.5mm 2mm 1mm !important;
+    overflow: hidden !important;
+  }
+
+  .statistics3-chart canvas {
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+  }
+}
+
+/* ===== POSICION UNIFICADA DE LA FLECHA DE LOS .statistics3-filters selectES ===== */
+@media screen {
+  .statistics3-filters select {
+    -webkit-appearance: none;
+    appearance: none;
+    padding-right: 38px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M2 2l4 4 4-4' fill='none' stroke='%230f172a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    background-size: 12px 8px;
+  }
+}
+/* Tamaño del icono del selector de fecha */
+.statistics3-filters input[type="date"]::-webkit-calendar-picker-indicator,
+.statistics3-filters input[type="month"]::-webkit-calendar-picker-indicator {
+  width: 18px;
+  height: 18px;
+  padding: 3px;
+  cursor: pointer;
+}

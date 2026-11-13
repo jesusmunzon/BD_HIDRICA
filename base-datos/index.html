@@ -1,0 +1,232 @@
+<!doctype html>
+
+
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<title>Base de datos · Control de Red</title>
+<link href="base-datos.css?v=20261016-ACUCON-ANCHOS-ESTABLES" rel="stylesheet"/>
+<link href="../styles.css?v=20261011-08" rel="stylesheet"/>
+<link href="../css/sidebar-component.css?v=20261013-07" rel="stylesheet" />
+  <link href="../css/access-control.css?v=20261013-03" rel="stylesheet" />
+<script defer="True" src="../js/sidebar-component.js?v=20261013-07"></script>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<link href="../css/auth-component.css?v=20261013-03" rel="stylesheet">
+<script type="module" src="../js/auth-component.js?v=20261013-03"></script>
+</head>
+<body class="database-page">
+<div id="sidebar-component"></div>
+<div class="overlay" id="overlay"></div>
+<div aria-busy="true" aria-live="polite" class="update-progress" id="datasetLoading">
+<div class="update-progress-card">
+<div class="update-progress-spinner"></div>
+<h2 id="datasetLoadingTitle">Cargando datos</h2>
+<p id="datasetLoadingText">Actualizando la tabla seleccionada...</p>
+<div class="update-progress-bar"><span></span></div>
+<small>Procesando información de Google Sheets</small>
+</div>
+</div><main>
+<header class="database-topbar">
+<button aria-label="Abrir menú" class="icon-button mobile-only" id="openMenu" type="button">
+<i data-lucide="menu"> </i>
+</button>
+<div class="database-heading">
+<h1>Base de datos</h1>
+<p>Consulta y filtra los datos cargados desde Google Sheets.</p>
+</div>
+<div class="headActions top-actions">
+<button class="session-action" id="identityButton" type="button"><i data-lucide="user-round"></i><span id="headerUserName">Invitado</span></button>
+<button class="secondary add-record-action" id="addRow" type="button"><i data-lucide="plus"></i>Añadir registro</button>
+<button class="primary save-action" id="saveExcel" type="button"><i data-lucide="save"></i>Guardar Cambios</button>
+</div>
+</header>
+<div class="database-content">
+<section class="tabs">
+<button class="tab active" data-dataset="balance" id="tabBalance">
+            Balance de poblaciones
+            <span hidden="" id="dirtyBadgeBalance"> </span>
+</button>
+<button class="tab" data-dataset="red" id="tabRed">
+            Datos de la Red
+            <span hidden="" id="dirtyBadgeRed"> </span>
+</button>
+<button class="tab" data-dataset="longitud" id="tabLongitud">
+            Longitud de la Red
+            <span hidden="" id="dirtyBadgeLongitud"> </span>
+</button>
+<button class="tab" data-dataset="chg" id="tabChg">
+            CHG Población
+            <span hidden="" id="dirtyBadgeChg"> </span>
+</button>
+<button class="tab" data-dataset="acucon" id="tabAcucon">
+            Datos ACUCON
+            <span hidden="" id="dirtyBadgeAcucon"> </span>
+</button>
+<button class="tab" data-dataset="carnf" id="tabCarnf">
+            Datos CARNF
+            <span hidden="" id="dirtyBadgeCarnf"> </span>
+</button>
+<button class="tab" data-dataset="aforos" id="tabAforos">
+            Datos Aforos y Pérdidas
+            <span hidden="" id="dirtyBadgeAforos"> </span>
+</button>
+</section>
+<section class="panel">
+<div class="toolbar">
+<label>
+              Año
+              <select id="yearFilter">
+<option value="">Todos</option>
+</select>
+</label>
+<label>
+              Mes
+              <select id="monthFilter">
+<option value="">Todos</option>
+</select>
+</label>
+<label class="grow">
+              Búsqueda general
+              <input id="globalFilter" placeholder="Buscar en cualquier columna..."/>
+</label>
+<button class="ghost" id="clearFilters">Limpiar filtros</button>
+</div>
+<div class="summary">
+<span id="rowCount"> Cargando… </span>
+<span> Origen: Google Sheets · los cambios locales no modifican la hoja. </span>
+</div>
+<div class="tableWrap">
+<table>
+<thead>
+<tr id="headRow"></tr>
+<tr class="columnFilters" id="filterRow"></tr>
+</thead>
+<tbody id="tableBody"></tbody>
+</table>
+</div>
+<div class="pagination">
+<label>
+              Filas
+              <select id="pageSize">
+<option>25</option>
+<option selected="">50</option>
+<option>100</option>
+<option>250</option>
+</select>
+</label>
+<button id="prevPage">‹</button>
+<span id="pageInfo"> </span>
+<button id="nextPage">›</button>
+</div>
+</section>
+<section class="chgAuxGrid" hidden="" id="chgInfoPanel">
+<section class="infoPanel chgLookupPanel">
+<div class="infoPanelHead">
+<div>
+<h2>Poblaciones y referencias</h2>
+</div>
+<button class="secondary" id="addChgLookup">
+                ＋ Añadir fila
+              </button>
+</div>
+<div class="tableWrap infoTableWrap">
+<table class="infoTable">
+<thead>
+<tr>
+<th>Población</th>
+<th>Referencia</th>
+<th>Acciones</th>
+</tr>
+</thead>
+<tbody id="chgLookupBody"></tbody>
+</table>
+</div>
+</section>
+<section class="infoPanel chgConceptPanel">
+<div class="infoPanelHead">
+<div>
+<h2>Referencias y conceptos</h2>
+</div>
+<button class="secondary" id="addChgInfo">＋ Añadir fila</button>
+</div>
+<div class="tableWrap infoTableWrap">
+<table class="infoTable">
+<thead>
+<tr>
+<th>Referencia</th>
+<th>Concepto</th>
+<th>Acciones</th>
+</tr>
+</thead>
+<tbody id="chgInfoBody"></tbody>
+</table>
+</div>
+</section>
+</section>
+</div>
+</main>
+<dialog id="editDialog">
+<form method="dialog">
+<div class="modalHead">
+<div>
+<p class="eyebrow">REGISTRO</p>
+<h2 id="modalTitle"></h2>
+</div>
+<button class="close" data-close-dialog="" formnovalidate="" type="button">
+            ×
+          </button>
+</div>
+<div class="formGrid" id="editFields"></div>
+<div class="modalActions">
+<button class="ghost" data-close-dialog="" formnovalidate="" type="button">
+            Cancelar
+          </button>
+<button class="primary" id="confirmEdit" type="button">
+            Guardar cambios
+          </button>
+</div>
+</form>
+</dialog>
+<dialog id="chgAuxDialog">
+<form method="dialog">
+<div class="modalHead">
+<div>
+<p class="eyebrow">REGISTRO</p>
+<h2 id="chgAuxTitle"></h2>
+</div>
+<button class="close" data-close-dialog="" formnovalidate="" type="button">
+            ×
+          </button>
+</div>
+<div class="formGrid" id="chgAuxFields"></div>
+<div class="modalActions">
+<button class="ghost" data-close-dialog="" formnovalidate="" type="button">
+            Cancelar
+          </button>
+<button class="primary" id="confirmChgAux" type="button">
+            Guardar cambios
+          </button>
+</div>
+</form>
+</dialog>
+<div id="toast"></div>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="tab.js?v=20261016-CARNF-2795" type="module"></script>
+
+<div class="simulation-modal" id="simulationModal" hidden>
+  <div class="simulation-backdrop" data-close-simulation></div>
+  <section class="simulation-dialog" role="dialog" aria-modal="true" aria-labelledby="simulationTitle">
+    <button class="simulation-close" type="button" data-close-simulation aria-label="Cerrar">×</button>
+    <div class="simulation-icon"><i data-lucide="flask-conical"></i></div>
+    <h2 id="simulationTitle">Fase de simulación</h2>
+    <p>La aplicación se encuentra actualmente en fase de simulación.</p>
+    <p>Los cambios realizados no se guardarán en las bases de datos. Cuando la aplicación pase a producción, este botón permitirá guardar los cambios.</p>
+    <button class="simulation-accept" type="button" data-close-simulation>Entendido</button>
+  </section>
+</div>
+
+</body>
+</html>

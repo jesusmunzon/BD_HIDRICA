@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html class="h-full" lang="es">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="light dark" name="color-scheme"/>
+  <title>
+   Estadísticos 3 | Control de Red
+  </title>
+  <link href="https://fonts.googleapis.com" rel="preconnect"/>
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+  <script src="https://unpkg.com/lucide@latest">
+  </script>
+  <link href="styles.css?v=20261016-CSS-CONSOLIDADO" rel="stylesheet"/>
+  <link href="../css/sidebar-component.css?v=20261013-07" rel="stylesheet" />
+  <link href="../css/access-control.css?v=20261013-03" rel="stylesheet" />
+   <script defer src="../js/sidebar-component.js?v=20261013-07"></script>
+
+  <link href="../css/auth-component.css?v=20261013-04" rel="stylesheet">
+  <script type="module" src="../js/auth-component.js?v=20261013-04"></script>
+</head>
+ <body>
+  <div id="sidebar-component"></div>
+  <div class="overlay" id="overlay">
+  </div>
+  <div class="app-shell">
+   <header class="topbar">
+    <button aria-label="Abrir menú" class="icon-button mobile-only" id="openMenu">
+     <i data-lucide="menu">
+     </i>
+    </button>
+    <div class="heading">
+     <h1>
+      Estadísticos 3
+     </h1>
+     <p>
+      Seguimiento mensual de consumos y pérdidas por población
+     </p>
+    </div>
+    <div class="topbar-actions">
+     <div aria-live="polite" class="consultation-status statistics3-status" id="consultationStatus">
+      <span class="consultation-status-label">
+       DATOS MOSTRADOS:
+      </span>
+      <div class="consultation-status-value" id="consultationStatusValue">
+       Preparando consulta...
+      </div>
+     </div>
+     <button class="header-action" id="print" type="button">
+      <i data-lucide="printer">
+      </i>
+      <span>
+       Imprimir
+      </span>
+     </button>
+     <button class="header-action user-action auth-trigger" id="identityButton" type="button">
+      <i data-lucide="user">
+      </i>
+      <span id="headerUserName">
+       Invitado
+      </span>
+     </button>
+    </div>
+   </header>
+   <main>
+    <section class="filters-card statistics3-filters">
+     <div class="filters-label">
+      <i data-lucide="filter">
+      </i>
+      <strong>
+       Filtros:
+      </strong>
+     </div>
+     <label class="population-label">
+      <span>
+       Población
+      </span>
+      <select id="population">
+      </select>
+     </label>
+     <label class="start-label">
+      <span>
+       Desde
+      </span>
+      <input id="startMonth" type="month"/>
+     </label>
+     <label class="until-label">
+      <span>
+       Hasta
+      </span>
+      <input disabled="" id="endMonth" type="month"/>
+     </label>
+     <div aria-label="Fecha actual" class="today-date">
+      <i data-lucide="calendar-days">
+      </i>
+      <span id="todayDate">
+      </span>
+     </div>
+    </section>
+    <section class="statistics3-grid">
+     <article class="chart-card population-chart-card">
+      <div class="statistics3-chart-title" id="selectedTitle">
+       POBLACIÓN
+      </div>
+      <div class="chart statistics3-chart">
+       <canvas id="selectedChart">
+       </canvas>
+      </div>
+     </article>
+     <article class="chart-card">
+      <div class="statistics3-chart-title">
+       TOTAL POBLACIONES
+      </div>
+      <div class="chart statistics3-chart">
+       <canvas id="populationsChart">
+       </canvas>
+      </div>
+     </article>
+     <article class="chart-card">
+      <div class="statistics3-chart-title">
+       SEVILLA
+      </div>
+      <div class="chart statistics3-chart">
+       <canvas id="sevilleChart">
+       </canvas>
+      </div>
+     </article>
+     <article class="chart-card">
+      <div class="statistics3-chart-title">
+       TOTAL
+      </div>
+      <div class="chart statistics3-chart">
+       <canvas id="totalChart">
+       </canvas>
+      </div>
+     </article>
+    </section>
+    <div id="loading">
+     Preparando visualización...
+    </div>
+    <div aria-hidden="true" aria-live="polite" class="update-progress" id="updateProgress" role="status">
+     <div class="update-progress-card">
+      <div aria-hidden="true" class="update-progress-spinner">
+      </div>
+      <h2>
+       Actualizando datos...
+      </h2>
+      <p id="updateProgressMessage">
+       Calculando indicadores de la población seleccionada.
+      </p>
+      <div aria-hidden="true" class="update-progress-bar is-running">
+       <span>
+       </span>
+      </div>
+      <small>
+       Evita imprimir hasta que finalice la actualización.
+      </small>
+     </div>
+    </div>
+   </main>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js">
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js">
+  </script>
+  <script src="app.js?v=20261013-PRINT-CONSOLIDADO" type="module">
+  </script>
+ </body>
+</html>
+

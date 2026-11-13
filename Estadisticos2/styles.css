@@ -1,0 +1,964 @@
+/* Reutiliza íntegramente los estilos de Estadísticos 1. */
+@import url("../styles.css?v=20261013-CSS-LIMPIO");
+
+/* Solo reglas específicas necesarias para Estadísticos 2. */
+.estadisticos2-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
+}
+.estadisticos2-grid > .chart-card {
+  min-width: 0;
+  width: 100%;
+}
+.reference-date-label input {
+  width: 100%;
+  min-width: 165px;
+  height: 44px;
+  padding: 0 12px;
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  background: var(--bg);
+  color: var(--text);
+  font: 700 12px Inter, sans-serif;
+  outline: none;
+}
+
+@media (max-width: 1100px) {
+  .estadisticos2-grid { grid-template-columns: 1fr; }
+}
+
+/* Balance hídrico integrado */.balance-main,
+.billing-panel,
+.balance-notes {background:var(--panel,#fff);border:1px solid var(--border,#dbe4ee);border-radius:16px;overflow:hidden;box-shadow:0 2px 8px rgba(15,23,42,.05);}.balance-title {padding:11px 14px;background:#a8d4ef;color:#073b72;font-size:15px;font-weight:800;text-transform:uppercase;}.balance-scroll {overflow-x:auto;}.balance-table {width:100%;min-width:1120px;border-collapse:collapse;color:#0f2e58;font-size:11px;}.balance-table th,
+.balance-table td {padding:7px 8px;border-right:1px solid #d6e0ea;border-bottom:1px solid #d6e0ea;text-align:right;white-space:nowrap;}.balance-table th:first-child,
+.balance-table td:first-child {text-align:left;}.balance-table thead tr:first-child th {background:#0b6489;color:#fff;text-align:center;font-weight:800;}.balance-table thead tr:nth-child(2) th,
+.balance-table thead tr:nth-child(3) th {background:#8ed06f;color:#fff;text-align:center;font-weight:800;}.balance-table tbody td {color:#17385f;background:#fff;}.balance-table tbody tr:nth-child(even) td {background:#fbfdff;}.balance-table .concept {font-weight:650;}.balance-table .major td {background:#e7f2fa!important;font-weight:800;color:#073b72;}.balance-table .loss td {color:#17385f;}.balance-table .system td {color:#187847;font-weight:800;background:#eefaf2!important;}.balance-table .phg-empty {background:#f6f8fb!important;}.distributed-notes b {color:#118044;}.billing-panel .balance-title {text-align:center;line-height:1.2;}.billing-table {width:100%;border-collapse:collapse;font-size:12px;}.billing-table th {background:#0b7780;color:#fff;}.billing-table th,
+.billing-table td {padding:8px 10px;border-right:1px solid #dbe4ee;border-bottom:1px solid #dbe4ee;}.billing-table td:last-child {text-align:center;font-weight:700;}.balance-notes {grid-column:1/-1;padding-bottom:8px;}.balance-notes h3 {margin:0;padding:10px 14px;color:#073b72;font-size:14px;}.balance-notes ol {margin:0;padding:0 22px 10px 40px;color:#17385f;font-size:11px;line-height:1.45;}.balance-notes li {margin:4px 0;}.balance-notes .note6 {white-space:pre-line;}
+
+/* Correcciones finales Balance Hídrico */
+.balance-title-main { text-align: center; }
+.balance-table th,
+.balance-table td,
+.balance-table th:first-child,
+.balance-table td:first-child {
+  text-align: center;
+}
+.balance-table .balance-concept {
+  text-align: center;
+}
+
+/* Ajustes finales de la tabla inferior */
+.balance-table tbody td:first-child,
+.balance-table .concept,
+.balance-table.compact tbody td:nth-child(2) { text-align: left; }
+.balance-table thead th { text-align: center; }
+.balance-table.compact .balance-group {
+  vertical-align: middle;
+  text-align: left;
+  font-weight: 800;
+  color: #073b72 !important;
+  background: #e7f2fa !important;
+}
+
+/* Corrección: tabla inferior sin desbordamiento ni altura vacía */
+.balance-section,
+.balance-grid {
+  align-items: start;
+}
+
+/* Ajuste definitivo de proporciones de la tabla inferior */
+.distributed-wrap > .balance-scroll {
+  min-width: 0;
+  width: 100%;
+  overflow: hidden;
+  align-self: start;
+  height: fit-content;
+  min-height: 0;
+  max-height: none;
+}
+.balance-table.compact {
+  width: 100%;
+  min-width: 0;
+  table-layout: fixed;
+  height: auto;
+}
+
+/* Proporciones finales de la tabla inferior */
+.balance-table.compact th:first-child,
+.balance-table.compact td:first-child {
+  width: 86px;
+}
+.balance-table.compact th:nth-child(2),
+.balance-table.compact td:nth-child(2) {
+  width: 175px;
+}
+@media(max-width:1200px) {.balance-section {grid-template-columns:1fr;}.billing-panel {grid-row:auto;}
+  .balance-main { overflow: hidden; }
+  .distributed-wrap > .balance-scroll { overflow-x: auto; }
+  .distributed-wrap {
+    width: 100%;
+    max-width: 100%;
+    grid-template-columns: 1fr;
+  }
+  .distributed-notes {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+/* Tarjeta exterior comun para los cuatro bloques */
+.balance-section {margin-top:18px;display:grid;grid-template-columns:minmax(0,1fr) 250px;gap:16px;
+  position: relative;
+  box-sizing: border-box;
+  padding: 10px;
+  align-items: start;
+  background: var(--panel, #fff);
+  border: 1px solid var(--border, #dbe4ee);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, .05);
+}
+
+.balance-section > .balance-main,
+.balance-section > .billing-panel {
+  align-self: start;
+  margin-top: 0 !important;
+  top: auto !important;
+  transform: none !important;
+}
+
+.distributed-wrap {display:grid;gap:12px;margin-top:12px;
+  overflow: visible;
+  align-items: start;
+  grid-auto-rows: min-content;
+  grid-template-columns: minmax(0, 1fr) 365px;
+  column-gap: 14px;
+  width: calc(100% + 266px);
+  max-width: calc(100% + 266px);
+}
+
+.distributed-notes {background:#f6f9fc;border:1px solid #dbe4ee;border-radius:12px;color:#26496d;font-size:11px;line-height:1.55; text-align: left;
+  display: block;
+  min-width: 0;
+  align-self: start;
+  height: auto;
+  min-height: 0;
+  padding: 12px 14px;
+  width: 365px;
+  max-width: 365px;
+  box-sizing: border-box;
+  position: static;
+  left: auto;
+  justify-self: end;
+}
+
+/* Elimina solo el borde de la tarjeta interior */
+.balance-main {
+  overflow: visible;
+  align-self: start;
+  height: auto;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+.balance-main > .balance-scroll,
+.balance-main > .distributed-wrap {
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Recupera el borde izquierdo de las dos tablas */
+.balance-main > .balance-scroll > .balance-table,
+.distributed-wrap > .balance-scroll > .balance-table,
+.balance-table.compact {
+  border-left: 1px solid #d6e0ea !important;
+}
+
+/* Garantiza la continuidad del borde en todas las filas */
+.balance-table th:first-child,
+.balance-table td:first-child,
+.balance-table.compact th:first-child,
+.balance-table.compact td:first-child {
+  border-left: 1px solid #d6e0ea !important;
+}
+
+/* Bloques finales bajo Balance Hidrico */
+.supplementary-card {
+  grid-column: 1 / -1;
+  margin-top: 16px;
+  overflow: hidden;
+  background: var(--panel, #fff);
+  border: 1px solid var(--border, #dbe4ee);
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, .05);
+}
+.supplementary-title {
+  padding: 11px 14px;
+  background: #69a9d7;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 800;
+  text-transform: uppercase;
+  text-align: center;
+}
+.supplementary-scroll { overflow-x: auto; }
+.supplementary-table {
+  width: 100%;
+  border-collapse: collapse;
+  color: #0f2e58;
+  font-size: 11px;
+}
+.supplementary-table th,
+.supplementary-table td {
+  padding: 8px 10px;
+  border-right: 1px solid #d6e0ea;
+  border-bottom: 1px solid #d6e0ea;
+  text-align: center;
+}
+.supplementary-table th {
+  background: #0b6489;
+  color: #fff;
+  font-weight: 800;
+}
+.supplementary-table thead tr:nth-child(2) th { background: #8ed06f; }
+.supplementary-table tbody td:first-child,
+.distributed-detail-table tbody td:nth-child(2),
+.distributed-detail-table tbody td:nth-child(3) { text-align: left; }
+.efficiency-table {
+  min-width: 1050px;
+  table-layout: fixed;
+}
+/* Primera fila: Concepto | Histórico (2 columnas) | Comparativa (2 columnas) | Fórmula. */
+.efficiency-table thead tr:first-child th:first-child,
+.efficiency-table tbody td:first-child {
+  width: 20%;
+}
+.efficiency-table thead tr:first-child th:nth-child(2),
+.efficiency-table thead tr:first-child th:nth-child(3) {
+  width: 24%;
+}
+.efficiency-table thead tr:nth-child(2) th,
+.efficiency-table tbody td:nth-child(n + 2):nth-child(-n + 5) {
+  width: 12%;
+}
+.efficiency-table thead tr:first-child th:last-child,
+.efficiency-table tbody td:last-child,
+.efficiency-table .formula-cell {
+  width: 32%;
+}
+.efficiency-table .formula-cell {
+  padding-inline: 6px;
+  text-align: center;
+  white-space: nowrap;
+  font-family: Georgia, serif;
+  font-size: 10px;
+  color: #111827;
+}
+.distributed-detail-table thead th:first-child { width: 340px; }
+.distributed-detail-table .water-band-head { width: 48px; }
+.distributed-detail-table tbody td:nth-child(6) {
+  background: #edf5fb;
+  font-weight: 800;
+}
+.distributed-detail-table .avoidable-row td { background: #fbd3ae; }
+.supplementary-footnotes {
+  padding: 10px 14px 14px;
+  font-size: 11px;
+  line-height: 1.55;
+  color: #17385f;
+}
+@media (max-width: 1200px) {
+  .balance-section { padding: 8px; }
+  .distributed-wrap {
+    width: 100%;
+    max-width: 100%;
+  }
+  .supplementary-card { border-radius: 10px; }
+}
+.distributed-detail-table .avoidable-row .water-band { background: #f5dddd; }
+
+/* Ajustes precisos del desglose de volumen */
+.distributed-detail-table .water-band {
+  width: 48px;
+  background: #edf5fb;
+  padding: 4px 2px;
+  text-align: center !important;
+  vertical-align: middle;
+  font-weight: 800;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+}
+.distributed-detail-table .registered-band { background: #edf5fb !important; }
+.distributed-detail-table .unregistered-band { background: #f5dddd !important; }
+.distributed-detail-table tbody td.numeric-value:not(.loss-highlight) { background: #fff !important; }
+
+/* Ajuste final segun la tabla de referencia */
+/* Conceptos del periodo anual en una sola linea */
+.distributed-detail-table thead th:nth-child(1) { width: 340px; }
+.distributed-detail-table thead th:nth-child(2) { width: 290px; }
+.distributed-detail-table thead th:nth-child(3),
+.distributed-detail-table thead th:nth-child(4) { width: 74px; }
+.distributed-detail-table .water-band-head,
+.distributed-detail-table .water-band { width: 48px; }
+/* Sombreados exactos: solo Fraudes, valores combinados y origen combinado */
+.distributed-detail-table tbody td { text-align: left; background: #fff; }
+.distributed-detail-table .group-cell {
+  width: 125px;
+  text-align: center !important;
+  vertical-align: middle;
+  font-size: 14px;
+  font-weight: 800; background: #e7f2fa !important; }
+.distributed-detail-table .registered-band,
+.distributed-detail-table .unregistered-band { background: #f5dddd !important; }
+.distributed-detail-table .loss-highlight { background: #fbd3ae !important; }
+.distributed-detail-table .subgroup-cell {
+  width: 210px;
+  text-align: center !important;
+  vertical-align: middle;
+  font-weight: 800; background: #fff !important; }
+/* Solo los valores numericos van centrados */
+.distributed-detail-table td:not(.numeric-value):not(.group-cell):not(.subgroup-cell):not(.water-band) {
+  text-align: left;
+}
+.distributed-detail-table .origin-cell { width: 245px; text-align: center !important; }
+
+/* Correccion de encaje, rellenos y pesos del desglose */
+.distributed-detail-table {
+  width: 100% !important;
+  min-width: 1280px;
+  table-layout: fixed !important;
+}
+.distributed-detail-table col.col-group { width: 12%; }
+.distributed-detail-table col.col-subgroup { width: 12%; }
+.distributed-detail-table col.col-concept { width: 20%; }
+.distributed-detail-table col.col-year { width: 7.5%; }
+.distributed-detail-table col.col-water { width: 3.5%; }
+.distributed-detail-table col.col-compare { width: 10%; }
+.distributed-detail-table col.col-origin { width: 15.5%; }
+/* Anula anchos anteriores basados en la posicion de los th con colspan */
+.distributed-detail-table thead th:nth-child(1),
+.distributed-detail-table thead th:nth-child(2),
+.distributed-detail-table thead th:nth-child(3),
+.distributed-detail-table thead th:nth-child(4),
+.distributed-detail-table .water-band-head,
+.distributed-detail-table .water-band {
+  width: auto;
+}
+.distributed-detail-table tbody td:nth-child(3) {
+  white-space: nowrap;
+}
+/* Los valores no llevan negrita; permanecen centrados */
+.distributed-detail-table td.numeric-value {
+  text-align: center !important;
+  font-weight: 400 !important;
+}
+/* Estas fuentes quedan expresamente sin relleno ni negrita */
+.distributed-detail-table .origin-cell.no-fill {
+  background: #fff !important;
+}
+.distributed-detail-table .normal-weight {
+  font-weight: 400 !important;
+}
+/* Mantiene el naranja solo en conceptos y valores de fraudes/perdidas evitables */
+.distributed-detail-table .loss-highlight.numeric-value,
+.distributed-detail-table td.loss-highlight:not(.origin-cell) {
+  background: #fbd3ae !important;
+}
+@media (min-width: 1280px) {
+  .distributed-detail-table { min-width: 100%; }
+}
+
+/* Correccion final de la fila Perdidas Reales */
+.distributed-detail-table td.no-fill {
+  background: #fff !important;
+}
+.distributed-detail-table td.no-fill.normal-weight {
+  font-weight: 400 !important;
+}
+
+/* Fecha de referencia y Actualizar alineados con Estadisticos 1 */
+
+.topbar-actions .update-action {
+  background: var(--brand);
+  border-color: var(--brand);
+  color: #fff;
+}
+.topbar-actions .update-action:hover { filter: brightness(.96); }
+.topbar-actions .update-action:disabled { cursor: wait; opacity: .78; }
+.topbar-actions .update-action.is-loading svg { animation: refresh-spin .75s linear infinite; }
+.topbar-actions .update-action.is-complete { background: #059669; border-color: #059669; }
+@keyframes refresh-spin { to { transform: rotate(360deg); } }
+
+/* Fecha de referencia restaurada y fecha actual como en Estadisticos 1 */
+
+.reference-date-label {
+  grid-template-columns: 112px minmax(165px, 190px) !important;
+  margin-left: 0;
+}
+.today-date {
+  margin-left: auto;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.today-date svg {
+  width: 18px;
+  height: 18px;
+  color: var(--brand);
+}
+@media (max-width: 760px) {
+  .reference-date-label { grid-template-columns: 1fr !important; }
+  .reference-date-label input { min-width: 0; }
+  .today-date {
+    width: 100%;
+    margin-left: 0;
+    justify-content: flex-end;
+  }
+}
+
+/* Identificacion del periodo realmente cargado en tablas y graficos */
+.consultation-status strong {
+  margin-top: 2px;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+/* Ajuste del resumen de datos presentados */
+.consultation-status-label {
+  color: var(--muted, #64748b);
+  font-size: 10px;
+  font-weight: 600;
+  width: 100%;
+  text-align: left;
+}
+.consultation-status .status-field-label,
+.consultation-status .status-separator {
+  font-weight: 400 !important;
+}
+.consultation-status .status-field-value {
+  font-size: inherit;
+  font-weight: 800;
+}
+@media (max-width: 1050px) {
+  .consultation-status {
+    order: 3;
+    width: 100%;
+    max-width: none;
+    align-items: flex-start !important;
+  }
+}
+
+/* Encaje final de la tarjeta de datos presentados en la cabecera */
+.topbar-actions {
+  min-width: 0;
+  max-width: 100%;
+}
+.consultation-status-label,
+.consultation-status-value {
+  overflow: hidden;
+  text-overflow: clip;
+}
+.topbar-actions .update-action,
+.topbar-actions #print,
+.topbar-actions .user-action {
+  flex: 0 0 auto;
+}
+
+/* Tarjeta de consulta mas ancha y ligeramente desplazada a la izquierda */
+
+/* Ancho dinamico definitivo de la tarjeta de consulta */
+
+/* Ancho exacto segun el contenido: Abril, Agosto o Septiembre */
+.consultation-status {
+  min-height: 42px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  background: var(--panel, #fff);
+  color: var(--text);
+  line-height: 1.2;
+  white-space: nowrap;
+  align-items: flex-start !important;
+  text-align: left !important;
+  box-sizing: border-box;
+  overflow: visible;
+  width: max-content !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  margin-left: -12px !important;
+  padding: 6px 10px !important;
+  flex: 0 0 auto !important;
+}
+.consultation-status-value {
+  margin-top: 2px;
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-start;
+  gap: 3px;
+  font-size: 10.5px;
+  letter-spacing: -0.08px;
+  width: max-content !important;
+  min-width: 0 !important;
+  white-space: nowrap !important;
+}
+@media (max-width: 1180px) {
+  .topbar {
+    flex-wrap: wrap;
+  }
+  .topbar-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+  .consultation-status {
+    flex: 0 1 auto;
+    width: max-content !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    margin-left: 0 !important;
+  }
+  .consultation-status-value {
+    min-width: 0;
+    width: auto !important;
+    white-space: normal !important;
+  }
+}
+
+/* Estadisticos 3: conserva menus y cabecera de Estadisticos 2 */
+
+/* Alineacion final de los filtros Desde y Hasta */
+
+/* Progreso visible durante la actualización */
+.update-progress {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(15, 35, 63, .28);
+  backdrop-filter: blur(3px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .18s ease, visibility .18s ease;
+}
+.update-progress.is-visible { opacity: 1; visibility: visible; }
+.update-progress-spinner {
+  width: 46px;
+  height: 46px;
+  margin: 0 auto 15px;
+  border: 4px solid #dbeafe;
+  border-top-color: var(--brand);
+  border-radius: 50%;
+  animation: refresh-spin .8s linear infinite;
+}
+.update-progress-card h2 { margin: 0 0 7px; color: var(--text); font-size: 20px; }
+.update-progress-card small { color: #64748b; font-size: 11px; }
+.header-action:disabled { cursor: wait; opacity: .62; }
+
+/* Barra de actividad continua: visible incluso durante calculos JavaScript sincronicos */
+.update-progress-card {
+  width: min(440px, 100%);
+  padding: 28px 30px 24px;
+  border: 1px solid #cbdcf0;
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 22px 55px rgba(15, 35, 63, .24);
+  text-align: center; overflow: visible !important; }
+.update-progress-card > p { margin: 0 0 20px; color: var(--muted); font-size: 13px; min-height: 20px; margin-bottom: 12px !important; }
+.update-progress-bar {
+  display: block !important;
+  position: relative;
+  width: 100%;
+  height: 9px !important;
+  margin: 0 0 18px !important;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #dbe7f5 !important;
+}
+.update-progress-bar span { display: block; height: 100%;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -42%;
+  width: 42% !important;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #2563eb, #38bdf8, #2563eb) !important;
+  animation: update-progress-slide 1.15s ease-in-out infinite !important;
+  transition: none !important;
+}
+@keyframes update-progress-slide {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(340%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .update-progress-bar span { animation-duration: 2.4s !important; }
+}
+
+/* Las etapas se ocultan: la ventana muestra solo spinner, mensaje y barra */
+
+/* =========================================================
+   ESTADISTICOS 2 - IMPRESION EN 3 PAGINAS A4 HORIZONTAL
+   Pagina 1: Balance hidrico
+   Pagina 2: Indicadores y desglose
+   Pagina 3: Graficas
+   ========================================================= */
+
+/* ===== IMPRESION CONSOLIDADA - ESTADISTICOS 2 ===== */
+@page {
+  size: A4 landscape;
+  margin: 0;
+}
+
+/* ===== POSICION UNIFICADA DE LA FLECHA DE LOS .filters-card selectES ===== */
+@media screen {
+  .filters-card select {
+    -webkit-appearance: none;
+    appearance: none;
+    padding-right: 38px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M2 2l4 4 4-4' fill='none' stroke='%230f172a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    background-size: 12px 8px;
+  }
+}
+/* Tamaño del icono del selector de fecha */
+.reference-date-label input[type="date"]::-webkit-calendar-picker-indicator {
+  width: 18px;
+  height: 18px;
+  padding: 3px;
+  cursor: pointer;
+}
+/* ===== AJUSTE EXCLUSIVO PARA IMPRESION: ANCHURAS DE COLUMNAS ===== */
+
+/* ===== POSICION FINAL COMO EN PANTALLA: BLOQUE INFERIOR A TODO EL ANCHO ===== */
+
+/* ===== AJUSTE FINAL DE IMPRESION: TABLA INFERIOR Y PANEL DERECHO ===== */
+@media print {.balance-main,
+.billing-panel,
+.balance-notes {box-shadow:none;border-radius:8px;}
+
+ .topbar-actions .update-action { display: none !important; } 
+
+  .today-date {
+    display: flex !important;
+    margin-left: auto !important;
+  }
+
+  .consultation-status {
+    display: flex !important;
+    border: 0;
+    padding: 0 4px;
+    background: transparent;
+    box-shadow: none;
+  }
+
+ .topbar .heading p {display:none;}.sidebar-footer {display:none!important;} 
+ .update-progress { display: none !important; } 
+
+  html,
+body {
+    width: auto !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #fff !important;
+    color: #0f2e58 !important;
+  }
+
+  #sidebar-component,
+.sidebar,
+.overlay,
+.topbar,
+.filters-card,
+.update-progress,
+#loading,
+.no-print {
+    display: none !important;
+  }
+
+  main {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    margin-left: 0 !important;
+    padding: 0 !important;
+  }
+
+  .balance-section,
+.supplementary-card,
+.estadisticos2-grid {
+    width: 100% !important;
+    max-width: none !important;
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  .balance-main,
+.billing-panel,
+.balance-notes,
+.supplementary-card,
+.chart-card {
+    box-shadow: none !important;
+  }
+
+  .balance-scroll,
+.supplementary-scroll {
+    overflow: visible !important;
+  }
+
+  .balance-table,
+.efficiency-table,
+.distributed-detail-table {
+    width: 100% !important;
+    min-width: 0 !important;
+    table-layout: fixed !important;
+  }
+
+  .distributed-notes,
+.balance-notes,
+.supplementary-footnotes {
+    font-size: 5.8pt !important;
+    line-height: 1.25 !important;
+  }
+
+  .supplementary-card:first-of-type {
+    break-before: page !important;
+    page-break-before: always !important;
+  }
+
+  .supplementary-card {
+    break-inside: avoid;
+    box-shadow: none;
+    margin: 0 0 3mm !important;
+    border-radius: 2mm !important;
+  }
+
+  .supplementary-title {
+    padding: 2mm !important;
+    font-size: 8.5pt !important;
+  }
+
+  .supplementary-table { min-width: 0;
+    font-size: 6.3pt !important;
+  }
+
+  .supplementary-table th,
+.supplementary-table td {
+    padding: 1.3mm 1.5mm !important;
+    white-space: normal !important;
+  }
+
+  .efficiency-table .formula-cell {
+    font-size: 5.8pt !important;
+  }
+
+  .estadisticos2-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    grid-template-rows: repeat(2, 88mm) !important;
+    gap: 4mm !important;
+    margin: 0 !important;
+    break-before: page !important;
+    page-break-before: always !important;
+  }
+
+  .estadisticos2-grid > .chart-card {
+    height: 88mm !important;
+    min-height: 88mm !important;
+    overflow: hidden !important;
+    border-radius: 2mm !important;
+  }
+
+  .estadisticos2-grid canvas {
+    max-height: 78mm !important;
+  }
+
+  .balance-title {
+    padding: 5px 8px !important;
+    font-size: 10px !important;
+    line-height: 1.05 !important;
+  }
+
+  .balance-table {min-width:0;
+    font-size: 6.5px !important;
+    line-height: 1.05 !important;
+  }
+
+  .balance-table th,
+.balance-table td {
+    white-space: normal !important;
+    padding: 2px 3px !important;
+    line-height: 1.05 !important;
+  }
+
+  .billing-table {
+    font-size: 8px !important;
+    line-height: 1.05 !important;
+  }
+
+  .billing-table th,
+.billing-table td {
+    padding: 3px 5px !important;
+    line-height: 1.05 !important;
+  }
+
+  .distributed-wrap {
+    width: calc(100% + 218px);
+    max-width: calc(100% + 218px);
+    grid-template-columns: minmax(0, 1fr) 50mm !important;
+    gap: 5px !important;
+    margin-top: 5px !important;
+  }
+
+  .distributed-notes {
+    padding: 5px 7px !important;
+    font-size: 6.5px !important;
+    line-height: 1.12 !important;
+  }
+
+  .balance-notes {
+    padding-bottom: 2px !important;
+  }
+
+  .balance-notes h3 {
+    margin: 0 !important;
+    padding: 4px 8px 2px !important;
+    font-size: 9px !important;
+    line-height: 1.05 !important;
+  }
+
+  .balance-notes ol {
+    margin: 0 !important;
+    padding: 0 10px 4px 24px !important;
+    font-size: 6.4px !important;
+    line-height: 1.12 !important;
+  }
+
+  .balance-notes li {
+    margin: 1px 0 !important;
+  }
+
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  /* Primera tabla BALANCE HIDRICO: ampliar la primera columna. */
+  .balance-table:not(.compact) {
+    table-layout: fixed !important;
+  }
+  .balance-table:not(.compact) th:first-child,
+  .balance-table:not(.compact) td:first-child {
+    width: 25% !important;
+  }
+
+  /* Segunda tabla BALANCE HIDRICO: ampliar solo la segunda columna. */
+  .balance-table.compact th:nth-child(2),
+  .balance-table.compact td:nth-child(2) {
+    width: 29% !important;
+  }
+
+  /* Zona superior: balance principal + facturacion. */
+  .balance-section {
+    padding: 6px;
+    box-shadow: none;
+    margin: 0 !important;
+    margin-top: 0 !important;
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+    break-after: page !important;
+    page-break-after: always !important;
+    grid-template-columns: minmax(0, 1fr) 40mm !important;
+    gap: 2mm !important;
+    overflow: visible !important;
+  }
+
+  .balance-section > .balance-main {
+    min-width: 0 !important;
+    overflow: visible !important;
+  }
+
+  .balance-section > .billing-panel {
+    width: 40mm !important;
+    min-width: 40mm !important;
+    max-width: 40mm !important;
+  }
+
+  /* El bloque inferior sale del ancho de balance-main y ocupa tambien
+     el espacio situado debajo de Facturacion real, igual que en pantalla. */
+
+  .balance-main > .distributed-wrap > .balance-scroll {
+    min-width: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow: visible !important;
+  }
+
+  /* Panel de formulas alineado con el borde derecho de Facturacion real. */
+
+  /* Mantiene la tabla inferior completa y su borde derecho visible. */
+  .distributed-balance-table {
+    width: calc(100% - 1px) !important;
+    max-width: calc(100% - 1px) !important;
+    margin-right: 1px !important;
+    table-layout: fixed !important;
+    border-right: 1px solid #cbd9e8 !important;
+  }
+  /* Reduce ligeramente la tabla inferior izquierda y amplia el panel de formulas. */
+  .balance-main > .distributed-wrap {
+    display: grid !important;
+    gap: 2mm !important;
+    width: calc(100% + 42mm) !important;
+    max-width: calc(100% + 42mm) !important;
+    margin: 2mm 0 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+    overflow: visible !important;
+    grid-template-columns: minmax(0, 1fr) 56mm !important;
+  }
+
+  .balance-main > .distributed-wrap > .distributed-notes {
+    display: block !important;
+    box-sizing: border-box !important;
+    width: 56mm !important;
+    min-width: 56mm !important;
+    max-width: 56mm !important;
+  }
+
+  /* Anchos reales de las columnas de la tabla inferior izquierda. */
+  .distributed-balance-table col.distributed-col-group {
+    width: 13% !important;
+  }
+
+  .distributed-balance-table col.distributed-col-concept {
+    width: 24% !important;
+  }
+
+  .distributed-balance-table col.distributed-col-value {
+    width: 7.875% !important;
+  }
+}
+
+/* Impresión Estadísticos 2: las 3 páginas centradas en A4 horizontal.
+   Sin margen lateral en @page; el centrado lo da el propio contenido (277 mm),
+   así no depende de los márgenes que elija el diálogo de impresión. */
+@media print {
+  html { width: auto !important; min-width: 0 !important; margin: 0 !important; padding: 0 !important; }
+  html body { width: 277mm !important; min-width: 0 !important; margin: 0 auto !important; padding: 0 !important; }
+  html body .app-shell { width: 277mm !important; max-width: none !important; margin: 0 auto !important; padding: 0 !important; }
+  html body main { width: 277mm !important; max-width: none !important; margin: 0 auto !important; padding: 0 !important; }
+
+  /* Margen superior de 8 mm en cada página (@page sin margen: lo da el contenido). */
+  html body .estadisticos2-grid { margin: 8mm 0 0 !important; }
+  html body .balance-section { margin: 8mm 0 0 !important; }
+  /* Chrome elimina el margen tras un salto de página forzado, por eso se desplaza la tarjeta. */
+  html body .supplementary-card { position: relative !important; top: 8mm !important; }
+}

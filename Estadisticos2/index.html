@@ -1,0 +1,90 @@
+<!doctype html>
+<html class="h-full" lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <meta content="light dark" name="color-scheme">
+  <title>Estadísticos 2 | Control de Red</title>
+  <link href="https://fonts.googleapis.com" rel="preconnect"/>
+  <link crossorigin href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link href="styles.css?v=20261016-CSS-CONSOLIDADO" rel="stylesheet" />
+  <link href="../css/sidebar-component.css?v=20261013-CSS-LIMPIO" rel="stylesheet" />
+  <link href="../css/access-control.css?v=20261013-03" rel="stylesheet" />
+  <script defer src="../js/sidebar-component.js?v=20261013-07"></script>
+
+  <link href="../css/auth-component.css?v=20261013-04" rel="stylesheet">
+  <script type="module" src="../js/auth-component.js?v=20261013-04"></script>
+</head>
+<body class="page-estadisticos2">
+  <div id="sidebar-component"></div>
+
+  <div class="overlay" id="overlay"></div>
+  <div class="app-shell">
+    <header class="topbar">
+      <button aria-label="Abrir menú" class="icon-button mobile-only" id="openMenu"><i data-lucide="menu"></i></button>
+      <div class="heading"><h1>Estadísticos 2</h1><p>Balance, eficiencia y pérdidas del sistema hidráulico</p></div>
+      <div class="topbar-actions">
+        <div class="consultation-status" id="consultationStatus" aria-live="polite">
+          <span class="consultation-status-label">DATOS PRESENTADOS:</span>
+          <div class="consultation-status-value" id="consultationStatusValue">
+            <span class="status-field-label">Fecha consulta:</span>
+            <strong class="status-field-value">Sin actualizar</strong>
+            <span class="status-separator">-</span>
+            <span class="status-field-label">Fecha referencia:</span>
+            <strong class="status-field-value">Sin actualizar</strong>
+          </div>
+        </div>
+        <button class="header-action" id="print" type="button"><i data-lucide="printer"></i><span>Imprimir</span></button>
+        <button class="header-action user-action auth-trigger" id="identityButton" type="button"><i data-lucide="user"></i><span id="headerUserName">Invitado</span></button>
+      </div>
+    </header>
+
+    <main>
+      <section class="filters-card">
+        <div class="filters-label"><i data-lucide="filter"></i><strong>Filtros:</strong></div>
+        <label><span>Mes</span><select id="month"></select></label>
+        <label><span>Año</span><select id="year"></select></label>
+        <label class="reference-date-label"><span>Fecha referencia</span><input id="referenceDate" type="date" value="2023-11-01"></label>
+        <div class="today-date" aria-label="Fecha actual"><i data-lucide="calendar-days"></i><span id="todayDate"></span></div>
+      </section>
+
+      <section class="dashboard-grid estadisticos2-grid">
+        <article class="chart-card">
+          <div class="chart-head"><div><h2>Balance hidráulico y pérdidas de distribución</h2><p>Evolución anual y acumulado hasta el mes consultado</p></div><span class="unit-pill">dam³/día · %</span></div>
+          <div class="chart chart-tall"><canvas id="balanceChart"></canvas></div>
+        </article>
+        <article class="chart-card">
+          <div class="chart-head"><div><h2>Dotación y consumo unitario doméstico</h2><p>Comparación anual por habitante</p></div><span class="unit-pill">l/hab/día</span></div>
+          <div class="chart chart-tall"><canvas id="unitChart"></canvas></div>
+        </article>
+        <article class="chart-card">
+          <div class="chart-head"><div><h2>Eficiencia hídrica</h2><p>Rendimiento de los subsistemas</p></div><span class="unit-pill">%</span></div>
+          <div class="chart chart-tall"><canvas id="efficiencyChart"></canvas></div>
+        </article>
+        <article class="chart-card">
+          <div class="chart-head"><div><h2>Índice de pérdidas de distribución</h2><p>Relación frente a las pérdidas técnicas mínimas</p></div><span class="unit-pill">Índice</span></div>
+          <div class="chart chart-tall"><canvas id="lossIndexChart"></canvas></div>
+        </article>
+      </section>
+      <div id="loading">Preparando visualización...</div>
+
+      <div class="update-progress" id="updateProgress" role="status" aria-live="polite" aria-hidden="true">
+        <div class="update-progress-card">
+          <div class="update-progress-spinner" aria-hidden="true"></div>
+          <h2 id="updateProgressTitle">Actualizando datos...</h2>
+          <p id="updateProgressMessage">Preparando la consulta seleccionada.</p>
+          <div class="update-progress-bar is-running" aria-hidden="true"><span id="updateProgressBar"></span></div>
+          
+          <small>Evita imprimir hasta que finalice la actualización.</small>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+  <script type="module" src="app.js?v=20261016-LIMPIO"></script>
+</body>
+</html>

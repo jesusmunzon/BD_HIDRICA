@@ -1,0 +1,19 @@
+/* Estado visual común para controles bloqueados por modo lectura. */
+.permission-disabled,
+body[data-access-mode="read"] .iconAction,
+body[data-access-mode="read"] #addRow,
+body[data-access-mode="read"] #addAuxRecord,
+body[data-access-mode="read"] #addAuxRecordForm button[type="submit"],
+body[data-access-mode="read"] #saveExcel,
+body[data-access-mode="read"] #addChgLookup,
+body[data-access-mode="read"] #addChgInfo,
+body[data-access-mode="read"] #auxTable .editable-cell input,
+body[data-access-mode="read"] #auxTable .editable-cell select {
+  opacity: .38 !important;
+  cursor: not-allowed !important;
+  filter: grayscale(1);
+  pointer-events: none !important;
+}
+body[data-access-mode="read"] #auxTable .editable-cell {
+  background: var(--soft, #f1f5f9) !important;
+}

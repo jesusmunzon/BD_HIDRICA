@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="es">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width,initial-scale=1" name="viewport"/>
+  <meta content="light dark" name="color-scheme"/>
+  <title>
+   Estadísticos 4 | Control de Red
+  </title>
+  <link href="https://fonts.googleapis.com" rel="preconnect"/>
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+  <script src="https://unpkg.com/lucide@latest">
+  </script>
+  <link href="styles.css?v=20261016-CSS-CONSOLIDADO" rel="stylesheet"/>
+  <link href="../css/sidebar-component.css?v=20261013-CSS-LIMPIO" rel="stylesheet" />
+  <link href="../css/access-control.css?v=20261013-03" rel="stylesheet" />
+   <script defer src="../js/sidebar-component.js?v=20261013-07"></script>
+
+  <link href="../css/auth-component.css?v=20261013-04" rel="stylesheet">
+  <script type="module" src="../js/auth-component.js?v=20261013-04"></script>
+</head>
+ <body>
+  <div id="sidebar-component"></div>
+  <div class="overlay" id="overlay">
+  </div>
+  <div class="app-shell">
+   <header class="topbar">
+    <button aria-label="Abrir menú" class="icon-button mobile-only" id="openMenu">
+     <i data-lucide="menu">
+     </i>
+    </button>
+    <div class="heading">
+     <h1>
+      Estadísticos 4
+     </h1>
+     <p>
+      Informe mensual del balance hidráulico
+     </p>
+    </div>
+    <div class="topbar-actions">
+     <div class="consultation-status">
+      <span>
+       DATOS PRESENTADOS:
+      </span>
+      <div>
+       Fecha consulta:
+       <strong id="statusDate">
+        Sin actualizar
+       </strong>
+      </div>
+     </div>
+     <button class="header-action" id="print">
+      <i data-lucide="printer">
+      </i>
+      <span>
+       Imprimir
+      </span>
+     </button>
+     <button class="header-action user-action auth-trigger" id="identityButton" type="button">
+      <i data-lucide="user">
+      </i>
+      <span id="headerUserName">
+       Invitado
+      </span>
+     </button>
+    </div>
+   </header>
+   <main>
+    <section class="filters-card">
+     <div class="filters-label">
+      <i data-lucide="filter">
+      </i>
+      <strong>
+       FILTROS:
+      </strong>
+     </div>
+     <label>
+      <span>
+       Mes
+      </span>
+      <select id="month">
+      </select>
+     </label>
+     <label>
+      <span>
+       Año
+      </span>
+      <select id="year">
+      </select>
+     </label>
+     <div class="today-date">
+      <i data-lucide="calendar-days">
+      </i>
+      <span id="todayDate">
+      </span>
+     </div>
+    </section>
+    <article class="report-sheet" id="reportSheet">
+     <header class="report-header">
+      <img alt="EMASESA" src="../logo.svg"/>
+      <div>
+       <h2>
+        DIRECCIÓN DE SOSTENIBILIDAD
+       </h2>
+       <p>
+        Informe mensual del balance hidráulico
+       </p>
+      </div>
+      <div class="report-period">
+       <span>
+        PERIODO CONSULTA
+       </span>
+       <strong id="reportPeriod">
+       </strong>
+      </div>
+     </header>
+     <div class="year-band" id="yearBand">
+     </div>
+     <div class="volume-band" id="volumeBand">
+     </div>
+     <div id="reportBody">
+     </div>
+     <footer class="report-footer">
+      <div>
+       <p>
+        (1) Miles de habitantes.
+       </p>
+       <p>
+        (2) Datos sujetos a posibles estimaciones por problemas en el actual sistema de medición.
+       </p>
+       <p>
+        <strong>
+         NOTA:
+        </strong>
+        Posible desajuste en decimales por redondeo a dam³.
+       </p>
+      </div>
+      <div>
+       <p id="reportDate">
+       </p>
+       <strong>
+        Ahorro y Eficiencia Hídrica
+       </strong>
+      </div>
+     </footer>
+    </article>
+    <div id="loading">
+     Preparando visualización...
+    </div>
+    <div aria-hidden="true" class="update-progress" id="updateProgress">
+     <div class="update-progress-card">
+      <div class="update-progress-spinner">
+      </div>
+      <h2>
+       Actualizando datos...
+      </h2>
+      <p>
+       Calculando el informe mensual.
+      </p>
+      <div class="update-progress-bar">
+       <span>
+       </span>
+      </div>
+      <small>
+       Evita imprimir hasta que finalice la actualización.
+      </small>
+     </div>
+    </div>
+   </main>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js">
+  </script>
+  <script src="app.js?v=20261013-AUDITADO" type="module">
+  </script>
+ </body>
+</html>
