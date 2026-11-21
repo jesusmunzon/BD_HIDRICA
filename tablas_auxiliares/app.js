@@ -1,5 +1,6 @@
 import { GOOGLE_DATABASE } from "../js/config.js";
 import { loadGoogleSheet } from "../js/google-sheets.js";
+import { UI_STATE_KEYS, readFilterState, writeFilterState } from "../js/ui-state.js";
 import {
   excelDate,
   formatSpanishNumber,
@@ -734,30 +735,68 @@ function saveExcel() {
   $("dirtyBadge").hidden = true;
   toast("Excel descargado");
 }
+function readStatistics1Period() {
+  const shared = readFilterState(UI_STATE_KEYS.statistics1, {});
+  const sessionMonth = Number(shared.month ?? shared.mes);
+  const sessionYear = Number(shared.year ?? shared.anio ?? shared.año);
+  const legacyMonth = Number(localStorage.getItem("control-red-month"));
+  const legacyYear = Number(localStorage.getItem("control-red-year"));
+  return {
+    month: sessionMonth >= 1 && sessionMonth <= 12 ? sessionMonth : legacyMonth,
+    year: sessionYear >= 2000 ? sessionYear : legacyYear,
+  };
+}
+function saveStatistics1Period() {
+  writeFilterState(UI_STATE_KEYS.statistics1, {
+    month: state.month,
+    year: state.year,
+  });
+  localStorage.setItem("control-red-month", String(state.month));
+  localStorage.setItem("control-red-year", String(state.year));
+}
+function syncStatistics1Period({ recalculate = true } = {}) {
+  const shared = readStatistics1Period();
+  const month = shared.month >= 1 && shared.month <= 12 ? shared.month : state.month;
+  const year = shared.year >= 2000 ? shared.year : state.year;
+  const changed = month !== state.month || year !== state.year;
+  state.month = month;
+  state.year = year;
+  if ($("monthFilter")) $("monthFilter").value = String(month);
+  if ($("yearFilter")) $("yearFilter").value = String(year);
+  if (changed && recalculate && state.matrix.length) calculate();
+}
 function initializeFilters() {
-  const storedMonth = Number(localStorage.getItem("control-red-month")),
-    storedYear = Number(localStorage.getItem("control-red-year"));
-  state.month = storedMonth >= 1 && storedMonth <= 12 ? storedMonth : 8;
-  state.year = storedYear >= 2000 ? storedYear : 2023;
+  const shared = readStatistics1Period();
+  state.month = shared.month >= 1 && shared.month <= 12 ? shared.month : 8;
+  state.year = shared.year >= 2000 ? shared.year : 2023;
   $("monthFilter").innerHTML = MONTHS.map(
-    (m, i) =>
-      `<option value="${i + 1}" ${i + 1 === state.month ? "selected" : ""}>${m}</option>`,
+    (m, i) => `<option value="${i + 1}" ${i + 1 === state.month ? "selected" : ""}>${m}</option>`,
   ).join("");
   const years = [];
-  for (let y = 2009; y <= new Date().getFullYear(); y++) years.push(y);
+  for (let y = 2009; y <= new Date().getFullYear(); y += 1) years.push(y);
   $("yearFilter").innerHTML = years
     .map((y) => `<option ${y === state.year ? "selected" : ""}>${y}</option>`)
     .join("");
   $("monthFilter").onchange = () => {
     state.month = +$("monthFilter").value;
-    localStorage.setItem("control-red-month", state.month);
+    saveStatistics1Period();
     calculate();
   };
   $("yearFilter").onchange = () => {
     state.year = +$("yearFilter").value;
-    localStorage.setItem("control-red-year", state.year);
+    saveStatistics1Period();
     calculate();
   };
+  window.addEventListener("storage", (event) => {
+    if (["control-red-month", "control-red-year"].includes(event.key)) {
+      syncStatistics1Period();
+    }
+  });
+  window.addEventListener("pageshow", () => syncStatistics1Period());
+  window.addEventListener("focus", () => syncStatistics1Period());
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) syncStatistics1Period();
+  });
 }
 function initializeShell() {
   window.lucide?.createIcons();
