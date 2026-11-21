@@ -17,7 +17,7 @@ const MONTHS = [
 
 const charts = {};
 const DATA_CACHE_KEY = 'estadisticos2-hydraulic-data-google';
-const DATA_CACHE_VERSION = 5;
+const DATA_CACHE_VERSION = 6;
 const DATA_CACHE_TTL_MS = 12 * 60 * 60 * 1000;
 let calculatorCache = null;
 const preparedExternalCache = new WeakMap();
@@ -427,33 +427,19 @@ function createBalanceModel(calculator, consultationYear, consultationMonth) {
   const comparePrevious = buildPeriod(consultationYear - 1, consultationMonth);
   const compareCurrent = buildPeriod(consultationYear, consultationMonth);
 
-  // BD_PHG_Anual contiene capacidades fijas, no anualidades.
-  // Fila 1: capacidad de aducción (dam³).
-  // Fila 2: capacidad de tratamiento (dam³).
-  // Solo se aplican a estos porcentajes del HISTÓRICO (anual).
+  // BD_PHG_Anual: fila 1 = capacidad de aducción; fila 2 = tratamiento.
   const conveyanceAnnualCapacityM3 =
     parseSpanishNumber(data.phgAnnualRows[0]?.[0], 0) * 1000;
   const treatmentAnnualCapacityM3 =
     parseSpanishNumber(data.phgAnnualRows[1]?.[0], 0) * 1000;
-  const capacityRatio = (value, capacity) =>
-    capacity ? value / capacity : 0;
+  const capacityRatio = (value, capacity) => capacity ? value / capacity : 0;
   const applyHistoricalCapacityPercentages = (period) => {
-    period.conveyanceOperationsPct = capacityRatio(
-      period.conveyanceOperations,
-      conveyanceAnnualCapacityM3,
-    );
-    period.treatmentOperationsPct = capacityRatio(
-      period.treatmentOperations,
-      treatmentAnnualCapacityM3,
-    );
-    period.treatmentLossesPct = capacityRatio(
-      period.treatmentLosses,
-      treatmentAnnualCapacityM3,
-    );
+    period.conveyanceOperationsPct = capacityRatio(period.conveyanceOperations, conveyanceAnnualCapacityM3);
+    period.treatmentOperationsPct = capacityRatio(period.treatmentOperations, treatmentAnnualCapacityM3);
+    period.treatmentLossesPct = capacityRatio(period.treatmentLosses, treatmentAnnualCapacityM3);
   };
   applyHistoricalCapacityPercentages(annualPrevious);
   applyHistoricalCapacityPercentages(annualCurrent);
-
   const days = Math.round((Date.UTC(consultationYear, consultationMonth, 1) - Date.UTC(consultationYear, 0, 1)) / 86400000);
   const annualDays = Math.round((Date.UTC(consultationYear + 1, 0, 1) - Date.UTC(consultationYear, 0, 1)) / 86400000);
   const phgRow = data.phgAnnualRows.find((row) => Number(parseSpanishNumber(row[0], NaN)) === consultationYear);
@@ -463,38 +449,21 @@ function createBalanceModel(calculator, consultationYear, consultationMonth) {
   const treatmentCapacity = consultationYear <= 2017 && historicTreatment > 0 ? historicTreatment : consultationYear === 2018 ? compareCurrent.captured : compareCurrent.etapInput;
   const distributionCapacity = compareCurrent.distributed;
 
-  // En COMPARATIVA (acumulado), los tres porcentajes usan como
-  // denominador la capacidad PHG acumulada de cada periodo.
+  // Comparativa acumulada: porcentajes respecto a la capacidad PHG acumulada.
   const accumulatedPhgCapacities = (period, year) => ({
-    conveyance:
-      year <= 2017 && historicConveyance > 0
-        ? historicConveyance
-        : period.captured,
-    treatment:
-      year <= 2017 && historicTreatment > 0
-        ? historicTreatment
-        : year === 2018
-          ? period.captured
-          : period.etapInput,
+    conveyance: year <= 2017 && historicConveyance > 0 ? historicConveyance : period.captured,
+    treatment: year <= 2017 && historicTreatment > 0
+      ? historicTreatment
+      : year === 2018 ? period.captured : period.etapInput,
   });
   const applyAccumulatedPhgPercentages = (period, year) => {
     const capacities = accumulatedPhgCapacities(period, year);
-    period.conveyanceOperationsPct = capacityRatio(
-      period.conveyanceOperations,
-      capacities.conveyance,
-    );
-    period.treatmentOperationsPct = capacityRatio(
-      period.treatmentOperations,
-      capacities.treatment,
-    );
-    period.treatmentLossesPct = capacityRatio(
-      period.treatmentLosses,
-      capacities.treatment,
-    );
+    period.conveyanceOperationsPct = capacityRatio(period.conveyanceOperations, capacities.conveyance);
+    period.treatmentOperationsPct = capacityRatio(period.treatmentOperations, capacities.treatment);
+    period.treatmentLossesPct = capacityRatio(period.treatmentLosses, capacities.treatment);
   };
   applyAccumulatedPhgPercentages(comparePrevious, consultationYear - 1);
   applyAccumulatedPhgPercentages(compareCurrent, consultationYear);
-
   return {
     consultationYear,
     monthLabel: MONTHS[consultationMonth - 1].slice(0, 3).toLowerCase(),
@@ -773,7 +742,7 @@ async function loadStatistics2Data() {
     aforosRows: rawRowsFromSheet(books[3]),
     populationRows: sheetRows(books[4]),
     legacyRows: sheetRows(books[5]),
-    phgAnnualRows: sheetRows(books[6]).slice(1),
+    phgAnnualRows: sheetRows(books[6]),
   };
   setCachedDataset(DATA_CACHE_KEY, loaded, { version: DATA_CACHE_VERSION })
     .catch((error) => console.warn('No se pudo guardar la caché hidráulica de IndexedDB.', error));
