@@ -322,6 +322,7 @@ const num = (value, decimals = 2) => {
   });
 };
 const isDateCol = (x) => x === "FECHA" || (cfg().dateCols || []).includes(x);
+function visibleCols(c = cfg()) { return activeKey === "red" ? c.cols.filter((x) => x !== "ID") : c.cols; }
 function calculateTotal(row, c = cfg()) {
   const totals =
     c.totalCols ||
@@ -389,7 +390,7 @@ function dirty() {
 function build() {
   const c = cfg();
   $("headRow").innerHTML =
-    c.cols
+    visibleCols(c)
       .map(
         (x) =>
           `<th><button class="sortButton" data-sort="${x}">${c.labels[x]} <span class="sortIcon">↕</span></button></th>`,
@@ -399,7 +400,7 @@ function build() {
     .querySelectorAll("[data-sort]")
     .forEach((b) => (b.onclick = () => changeSort(b.dataset.sort)));
   $("filterRow").innerHTML =
-    c.cols
+    visibleCols(c)
       .map((x) => `<th><input data-col="${x}" placeholder="Filtrar..."></th>`)
       .join("") + "<th></th>";
   $("filterRow")
@@ -540,16 +541,159 @@ function render() {
     list
       .map(
         (r) =>
-          `<tr>${c.cols.map((x) => (x === c.notes ? `<td class="statusCell">${noteCell(r[x])}</td>` : isDateCol(x) ? `<td>${displayDate(r[x])}</td>` : c.numeric.includes(x) || c.sumCols?.includes(x) ? `<td>${num(r[x], activeKey === "red" && x === "ID" ? 0 : 2)}</td>` : `<td>${esc(r[x])}</td>`)).join("")}<td class="actions"><button class="iconAction edit" onclick="openEdit(${r._id})" title="Editar"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L8 18l-4 1 1-4Z"/></svg></button><button class="iconAction delete" onclick="removeRow(${r._id})" title="Eliminar"><svg viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v5M14 11v5"/></svg></button></td></tr>`,
+          `<tr>${visibleCols(c).map((x) => (x === c.notes ? `<td class="statusCell">${noteCell(r[x])}</td>` : isDateCol(x) ? `<td>${displayDate(r[x])}</td>` : c.numeric.includes(x) || c.sumCols?.includes(x) ? `<td>${num(r[x], activeKey === "red" && x === "ID" ? 0 : 2)}</td>` : `<td>${esc(r[x])}</td>`)).join("")}<td class="actions"><button class="iconAction edit" onclick="openEdit(${r._id})" title="Editar"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L8 18l-4 1 1-4Z"/></svg></button><button class="iconAction delete" onclick="removeRow(${r._id})" title="Eliminar"><svg viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v5M14 11v5"/></svg></button></td></tr>`,
       )
       .join("") ||
-    `<tr><td colspan="${c.cols.length + 1}">Sin resultados</td></tr>`;
+    `<tr><td colspan="${visibleCols(c).length + 1}">Sin resultados</td></tr>`;
   const pages = Math.max(1, Math.ceil(filtered.length / size));
   $("rowCount").textContent =
     `${filtered.length.toLocaleString("es-ES")} registros`;
   $("pageInfo").textContent = `Página ${page} de ${pages}`;
   $("prevPage").disabled = page <= 1;
   $("nextPage").disabled = page >= pages;
+}
+function autocompleteValues(key, field) {
+  const map = {
+    balance: { COD_DISP: "COD_DISP" }, red: { PROCEDENCIA_2: "PROCEDENCIA_2" },
+    longitud: { COD: "COD" }, acucon: { Población: "Población" },
+    carnf: { "COD POBLACIÓN": "COD POBLACIÓN" }, aforos: { "CÓDIGO POBLACIÓN": "CÓDIGO POBLACIÓN" },
+  };
+  const source = map[key]?.[field];
+  if (!source) return [];
+  return [...new Set(rows.map(r => String(r[source] ?? "").trim()).filter(Boolean))]
+    .sort((a,b) => a.localeCompare(b,"es",{numeric:true,sensitivity:"base"}));
+}
+function relatedPopulation(codeField, populationField, code, currentId = null) {
+  const target=String(code??"").trim().toLocaleLowerCase("es");
+  if(!target) return null;
+  for(let i=rows.length-1;i>=0;i--){
+    const row=rows[i];
+    if(row._id!==currentId && String(row[codeField]??"").trim().toLocaleLowerCase("es")===target) return row[populationField]??"";
+  }
+  return null;
+}
+function initializeFieldLists() {
+  document.querySelectorAll("#editFields .autocomplete-box").forEach(box=>{
+    const input=box.querySelector("input"), button=box.querySelector(".autocomplete-arrow"), menu=box.querySelector(".autocomplete-menu");
+    let values = autocompleteValues(activeKey, input.name);
+    if (box.dataset.values) {
+      try {
+        const embeddedValues = JSON.parse(box.dataset.values);
+        if (Array.isArray(embeddedValues)) values = embeddedValues;
+      } catch (error) {
+        console.warn("No se pudo leer el listado del campo", input.name, error);
+      }
+    }
+    const close=()=>menu.classList.remove("open");
+    const render=(all=false)=>{
+      const typed=input.value.trim().toLocaleLowerCase("es");
+      const matches=values.filter(v=>all||!typed||v.toLocaleLowerCase("es").startsWith(typed));
+      menu.innerHTML=matches.length
+        ? matches.map(v=>`<button type="button" class="autocomplete-option" data-value="${esc(v)}">${esc(v)}</button>`).join("")
+        : `<span class="autocomplete-empty">Valor nuevo. Completa libremente los campos relacionados.</span>`;
+      menu.classList.add("open");
+    };
+    const select=value=>{input.value=value; input.dispatchEvent(new Event("input",{bubbles:true})); input.dispatchEvent(new Event("change",{bubbles:true})); close(); input.focus();};
+    button.onclick=e=>{e.preventDefault();e.stopPropagation();menu.classList.contains("open")?close():render(true);};
+    input.addEventListener("input",()=>render(false));
+    input.addEventListener("keydown",e=>{if(e.key==="Escape")close();});
+    menu.addEventListener("mousedown", e => {
+      const option = e.target.closest(".autocomplete-option");
+      if (option) { e.preventDefault(); select(option.dataset.value); }
+      else e.stopPropagation();
+    });
+    menu.addEventListener("pointerdown", e => e.stopPropagation());
+    document.addEventListener("pointerdown", event => {
+      if (!box.contains(event.target) && !menu.contains(event.target)) close();
+    });
+  });
+}
+function redOriginLookup(origin2, currentId = null) {
+  const normalized = String(origin2 ?? "").trim().toLocaleLowerCase("es");
+  if (!normalized) return null;
+  for (let i = rows.length - 1; i >= 0; i--) {
+    const row = rows[i];
+    if (row._id === currentId) continue;
+    if (String(row.PROCEDENCIA_2 ?? "").trim().toLocaleLowerCase("es") === normalized) return row;
+  }
+  return null;
+}
+function balanceDeviceLookup(code, currentId = null) {
+  const normalized = String(code ?? "").trim().toLocaleLowerCase("es");
+  if (!normalized) return null;
+  for (let i = rows.length - 1; i >= 0; i--) {
+    const row = rows[i];
+    if (row._id === currentId) continue;
+    if (String(row.COD_DISP ?? "").trim().toLocaleLowerCase("es") === normalized) return row;
+  }
+  return null;
+}
+const ACUCON_TOTAL_FIELDS = [
+  "CP_NOCTURNO DOMÉSTICO", "CP_NOCTURNO INDUSTRIAL", "CP_NOCTURNO OFICIAL",
+  "CP_DIURNO DOMÉSTICO", "CP_DIURNO INDUSTRIAL", "CP_DIURNO OFICIAL",
+  "AC_NOCTURNO DOMÉSTICO", "AC_NOCTURNO INDUSTRIAL", "AC_NOCTURNO OFICIAL",
+  "AC_DIURNO DOMÉSTICO", "AC_DIURNO INDUSTRIAL", "AC_DIURNO OFICIAL",
+];
+function calculateAcuconTotal(source) {
+  const total = ACUCON_TOTAL_FIELDS.reduce((sum, field) => {
+    const value = typeof source?.get === "function" ? source.get(field) : source?.[field];
+    const number = parseSpanishNumber(value);
+    return sum + (Number.isFinite(number) ? number : 0);
+  }, 0);
+  return Math.round((total + Number.EPSILON) * 100) / 100;
+}
+function recalculateAcuconTotal() {
+  if (activeKey !== "acucon") return;
+  const form = $("editFields");
+  const total = form.querySelector('[name="TOTAL AC+CP"]');
+  if (!total) return;
+  const values = new Map(ACUCON_TOTAL_FIELDS.map(field => [field, form.querySelector(`[name="${field}"]`)?.value ?? ""]));
+  total.value = String(calculateAcuconTotal(values));
+}
+const CARNF_ARNF_FIELDS = ["CONSUMOS PROPIOS", "PURGAS CON CONTADOR AQUA-WS", "RIEGOS Y BALDEO MUNICIPAL", "ZONAS DEPRIMIDAS Y EVENTOS"];
+const CARNF_ANRNF_FIELDS = ["MANTENIMIENTO (INTERVENCIONES DE REDES)", "PURGAS SIN CONTADOR", "PUNTOS MEDIDA CLORO"];
+function calculateCarnfTotal(source, fields) {
+  const total = fields.reduce((sum, field) => {
+    const value = typeof source?.get === "function" ? source.get(field) : source?.[field];
+    const number = parseSpanishNumber(value);
+    return sum + (Number.isFinite(number) ? number : 0);
+  }, 0);
+  return Math.round((total + Number.EPSILON) * 100) / 100;
+}
+function recalculateCarnfTotals() {
+  if (activeKey !== "carnf") return;
+  const form = $("editFields");
+  const values = new Map([...CARNF_ARNF_FIELDS, ...CARNF_ANRNF_FIELDS].map((field) => [field, form.querySelector(`[name="${field}"]`)?.value ?? ""]));
+  const arnf = form.querySelector('[name="TOTAL AGUA REGISTRADA NO FACTURADA (ARNF)"]');
+  const anrnf = form.querySelector('[name="TOTAL AGUA NO REGISTRADA NO FACTURADA (ANRNF)"]');
+  if (arnf) arnf.value = String(calculateCarnfTotal(values, CARNF_ARNF_FIELDS));
+  if (anrnf) anrnf.value = String(calculateCarnfTotal(values, CARNF_ANRNF_FIELDS));
+}
+function carnfPopulationLookup(code, currentId = null) {
+  const normalized = String(code ?? "").trim().toLocaleLowerCase("es");
+  if (!normalized) return null;
+  for (let i = rows.length - 1; i >= 0; i--) {
+    const row = rows[i];
+    if (row._id !== currentId && String(row["COD POBLACIÓN"] ?? "").trim().toLocaleLowerCase("es") === normalized) return row;
+  }
+  return null;
+}
+function daysInSelectedMonth(monthValue) {
+  const match = /^(\d{4})-(\d{2})/.exec(String(monthValue ?? ""));
+  return match ? new Date(Number(match[1]), Number(match[2]), 0).getDate() : 0;
+}
+function recalculateBalanceCmd() {
+  if (activeKey !== "balance") return;
+  const fields = $("editFields");
+  const dateInput = fields.querySelector('[name="FECHA"]');
+  const cmesInput = fields.querySelector('[name="CMES"]');
+  const cmdInput = fields.querySelector('[name="CMD"]');
+  if (!dateInput || !cmesInput || !cmdInput) return;
+  const days = daysInSelectedMonth(dateInput.value);
+  const cmes = parseSpanishNumber(cmesInput.value);
+  cmdInput.value = days && Number.isFinite(cmes)
+    ? String(Math.round((cmes / days + Number.EPSILON) * 1000000) / 1000000)
+    : "";
 }
 function openEdit(id) {
   const c = cfg();
@@ -569,7 +713,8 @@ function openEdit(id) {
       : rows.find((x) => x._id === id);
   $("modalTitle").textContent =
     id == null ? "Añadir registro" : "Editar registro";
-  $("editFields").innerHTML = c.cols
+  const editorCols = activeKey === "red" ? c.cols.filter((x) => x !== "ID") : c.cols;
+  $("editFields").innerHTML = editorCols
     .map((x) => {
       if (activeKey === "chg" && x === "POBLACIÓN") {
         const values = [
@@ -579,28 +724,121 @@ function openEdit(id) {
               .filter(Boolean),
           ),
         ].sort((a, b) => a.localeCompare(b, "es"));
-        return `<label>${c.labels[x]}<select name="${x}"><option value="">Seleccionar población...</option>${values.map((v) => `<option value="${esc(v)}" ${v === String(r[x] ?? "") ? "selected" : ""}>${esc(v)}</option>`).join("")}</select></label>`;
+        const tooltip = "Al seleccionar Población se autocompleta Referencia.";
+        return `<label class="field-with-tooltip">${c.labels[x]}<span class="autocomplete-box" data-values="${esc(JSON.stringify(values))}"><input name="${x}" type="text" value="${esc(r[x])}" autocomplete="off" aria-describedby="tip-chg-poblacion"><button type="button" class="autocomplete-arrow" aria-label="Mostrar listado">▼</button><span class="autocomplete-menu" role="listbox"></span></span><span id="tip-chg-poblacion" class="field-tooltip" role="tooltip">${tooltip}</span></label>`;
       }
+      if (activeKey === "balance" && x === "CMD")
+        return `<label>${c.labels[x]}<input name="${x}" type="number" step="any" value="${esc(r[x])}" readonly title="Se calcula automaticamente como CMES dividido entre los dias del mes"></label>`;
+      if (activeKey === "acucon" && x === "TOTAL AC+CP")
+        return `<label>${c.labels[x]}<input name="${x}" type="number" step="any" value="${esc(r[x])}" readonly aria-readonly="true" tabindex="-1" title="Se calcula automáticamente sumando todos los valores AC y CP"></label>`;
+      if (activeKey === "carnf" && (x === "TOTAL AGUA REGISTRADA NO FACTURADA (ARNF)" || x === "TOTAL AGUA NO REGISTRADA NO FACTURADA (ANRNF)"))
+        return `<label>${c.labels[x]}<input name="${x}" type="number" step="any" value="${esc(r[x])}" readonly title="Se calcula automáticamente a partir de los conceptos correspondientes"></label>`;
       if (isCalculatedCol(c, x))
         return `<label>${c.labels[x]}<input name="${x}" type="text" value="${esc(num(r[x]))}" readonly></label>`;
       if (activeKey === "chg" && x === "Referencia")
         return `<label>${c.labels[x]}<input name="${x}" type="text" value="${esc(r[x])}" readonly title="Se calcula automáticamente desde Poblaciones y referencias"></label>`;
-      return `<label class="${x === c.notes ? "full" : ""}">${c.labels[x]}${x === c.notes ? `<textarea name="${x}">${esc(r[x])}</textarea>` : `<input name="${x}" type="${isDateCol(x) ? "date" : c.sumCols?.includes(x) ? "text" : c.numeric.includes(x) ? "number" : "text"}" step="any" value="${esc(r[x])}">`}</label>`;
+      const monthOnly = ((activeKey === "balance" || activeKey === "red" || activeKey === "longitud" || activeKey === "carnf" || activeKey === "aforos") && x === "FECHA") || (activeKey === "acucon" && x === "Fecha");
+      const fieldValue = monthOnly ? String(r[x] ?? "").slice(0, 7) : r[x];
+      const autocompleteTitle =
+        (activeKey === "red" && x === "PROCEDENCIA_2")
+          ? "Al introducir Procedencia 2 se autocompletan Procedencia 1, Subtipo y Tipo. Después podrás editarlos."
+          : (activeKey === "balance" && x === "COD_DISP")
+            ? "Al introducir Código disp. se autocompletan Nombre dispositivo, Población y Código señal. Después podrás editarlos."
+            : (activeKey === "longitud" && x === "COD")
+              ? "Al introducir Código se autocompleta Población. Después podrás editarla."
+              : (activeKey === "carnf" && x === "COD POBLACIÓN")
+                ? "Al introducir Código población se autocompleta Población. Después podrás editarla."
+                : (activeKey === "aforos" && x === "CÓDIGO POBLACIÓN")
+                  ? "Al introducir Código población se autocompleta Población. Después podrás editarla."
+                  : "";
+      const listed = autocompleteValues(activeKey, x).length > 0;
+      const inputHtml = x === c.notes
+        ? `<textarea name="${x}">${esc(r[x])}</textarea>`
+        : listed
+          ? `<span class="autocomplete-box"><input name="${x}" type="text" value="${esc(fieldValue)}" autocomplete="off"${autocompleteTitle ? ` aria-describedby="tip-${x}"` : ""}><button type="button" class="autocomplete-arrow" aria-label="Mostrar listado">▼</button><span class="autocomplete-menu" role="listbox"></span></span>`
+          : `<input name="${x}" type="${monthOnly ? "month" : isDateCol(x) ? "date" : c.sumCols?.includes(x) ? "text" : c.numeric.includes(x) ? "number" : "text"}" step="any" value="${esc(fieldValue)}"${autocompleteTitle ? ` aria-describedby="tip-${x}"` : ""}>`;
+      return `<label class="${x === c.notes ? "full" : ""}${autocompleteTitle ? " field-with-tooltip" : ""}">${c.labels[x]}${inputHtml}${autocompleteTitle ? `<span id="tip-${x}" class="field-tooltip" role="tooltip">${autocompleteTitle}</span>` : ""}</label>`;
     })
     .join("");
-  const populationSelect = $("editFields").querySelector(
-    'select[name="POBLACIÓN"]',
-  );
-  if (populationSelect) {
-    const referenceInput = $("editFields").querySelector(
-      'input[name="Referencia"]',
-    );
-    populationSelect.onchange = () => {
+  initializeFieldLists();
+  if (activeKey === "acucon") {
+    const totalInput = $("editFields").querySelector('[name="TOTAL AC+CP"]');
+    if (totalInput) {
+      totalInput.readOnly = true;
+      totalInput.setAttribute("aria-readonly", "true");
+      totalInput.tabIndex = -1;
+    }
+  }
+  if (activeKey === "chg") {
+    const populationInput = $("editFields").querySelector('input[name="POBLACIÓN"]');
+    const referenceInput = $("editFields").querySelector('input[name="Referencia"]');
+    const completeReference = () => {
       const hit = stores.chg.lookup.find(
-        (v) => String(v.POBLACIÓN ?? "").trim() === populationSelect.value,
+        (v) => String(v.POBLACIÓN ?? "").trim().toLocaleLowerCase("es") === String(populationInput?.value ?? "").trim().toLocaleLowerCase("es"),
       );
       referenceInput.value = hit ? hit.Referencia : "";
     };
+    ["input", "change", "blur"].forEach((eventName) => populationInput?.addEventListener(eventName, completeReference));
+  }
+  if (activeKey === "red") {
+    const fields = $("editFields");
+    const origin2Input = fields.querySelector('[name="PROCEDENCIA_2"]');
+    const completeOriginFields = () => {
+      const hit = redOriginLookup(origin2Input?.value, editingId);
+      if (!hit) return;
+      fields.querySelector('[name="PROCEDENCIA_1"]').value = hit.PROCEDENCIA_1 ?? "";
+      fields.querySelector('[name="SUBTIPO"]').value = hit.SUBTIPO ?? "";
+      fields.querySelector('[name="TIPO"]').value = hit.TIPO ?? "";
+    };
+    origin2Input?.addEventListener("input", completeOriginFields);
+    origin2Input?.addEventListener("change", completeOriginFields);
+    origin2Input?.addEventListener("blur", completeOriginFields);
+  }
+  if (activeKey === "longitud") {
+    const fields=$("editFields"), code=fields.querySelector('[name="COD"]'), population=fields.querySelector('[name="POBLACIÓN"]');
+    const complete=()=>{population.value=relatedPopulation("COD","POBLACIÓN",code.value,editingId)??"";};
+    ["input","change","blur"].forEach(ev=>code?.addEventListener(ev,complete));
+  }
+  if (activeKey === "aforos") {
+    const fields=$("editFields"), code=fields.querySelector('[name="CÓDIGO POBLACIÓN"]'), population=fields.querySelector('[name="POBLACIÓN"]');
+    const complete=()=>{population.value=relatedPopulation("CÓDIGO POBLACIÓN","POBLACIÓN",code.value,editingId)??"";};
+    ["input","change","blur"].forEach(ev=>code?.addEventListener(ev,complete));
+  }
+  if (activeKey === "carnf") {
+    const fields = $("editFields");
+    const codeInput = fields.querySelector('[name="COD POBLACIÓN"]');
+    const completePopulation = () => {
+      const hit = carnfPopulationLookup(codeInput?.value, editingId);
+      if (hit) fields.querySelector('[name="POBLACIÓN"]').value = hit["POBLACIÓN"] ?? "";
+    };
+    codeInput?.addEventListener("change", completePopulation);
+    codeInput?.addEventListener("blur", completePopulation);
+    [...CARNF_ARNF_FIELDS, ...CARNF_ANRNF_FIELDS].forEach((field) => fields.querySelector(`[name="${field}"]`)?.addEventListener("input", recalculateCarnfTotals));
+    recalculateCarnfTotals();
+  }
+  if (activeKey === "acucon") {
+    const fields = $("editFields");
+    ACUCON_TOTAL_FIELDS.forEach(field => fields.querySelector(`[name="${field}"]`)?.addEventListener("input", recalculateAcuconTotal));
+    recalculateAcuconTotal();
+  }
+  if (activeKey === "balance") {
+    const fields = $("editFields");
+    const codeInput = fields.querySelector('[name="COD_DISP"]');
+    const dateInput = fields.querySelector('[name="FECHA"]');
+    const cmesInput = fields.querySelector('[name="CMES"]');
+    const completeDeviceFields = () => {
+      const hit = balanceDeviceLookup(codeInput?.value, editingId);
+      if (!hit) return;
+      fields.querySelector('[name="NOM_DISP"]').value = hit.NOM_DISP ?? "";
+      fields.querySelector('[name="POBLA"]').value = hit.POBLA ?? "";
+      fields.querySelector('[name="COD_SEÑAL"]').value = hit["COD_SEÑAL"] ?? "";
+    };
+    codeInput?.addEventListener("input", completeDeviceFields);
+    codeInput?.addEventListener("change", completeDeviceFields);
+    codeInput?.addEventListener("blur", completeDeviceFields);
+    dateInput?.addEventListener("input", recalculateBalanceCmd);
+    cmesInput?.addEventListener("input", recalculateBalanceCmd);
+    recalculateBalanceCmd();
   }
   $("editDialog").showModal();
 }
@@ -610,7 +848,7 @@ function saveEdit(e) {
     fd = new FormData($("editDialog").querySelector("form")),
     o = {};
   c.cols.forEach((x) => {
-    if (isCalculatedCol(c, x)) return;
+    if (isCalculatedCol(c, x) || (activeKey === "red" && x === "ID")) return;
     const raw = String(fd.get(x) ?? "").trim();
     if (c.sumCols?.includes(x)) {
       const n = Number(raw.replace(",", "."));
@@ -619,8 +857,26 @@ function saveEdit(e) {
       const normalizedNumber = raw.replace(",", ".");
       o[x] = c.numeric.includes(x) ? Number(normalizedNumber || 0) : raw;
     }
-    if (isDateCol(x)) o[x] = excelDate(o[x]);
+    if (isDateCol(x)) {
+      o[x] = (((activeKey === "balance" || activeKey === "red" || activeKey === "longitud" || activeKey === "carnf" || activeKey === "aforos") && x === "FECHA") || (activeKey === "acucon" && x === "Fecha")) && /^\d{4}-\d{2}$/.test(o[x])
+        ? `${o[x]}-01`
+        : excelDate(o[x]);
+    }
   });
+  if (activeKey === "acucon") {
+    o["TOTAL AC+CP"] = calculateAcuconTotal(o);
+  }
+  if (activeKey === "carnf") {
+    o["TOTAL AGUA REGISTRADA NO FACTURADA (ARNF)"] = calculateCarnfTotal(o, CARNF_ARNF_FIELDS);
+    o["TOTAL AGUA NO REGISTRADA NO FACTURADA (ANRNF)"] = calculateCarnfTotal(o, CARNF_ANRNF_FIELDS);
+  }
+  if (activeKey === "balance") {
+    const days = daysInSelectedMonth(o.FECHA);
+    const cmes = Number(o.CMES);
+    o.CMD = days && Number.isFinite(cmes)
+      ? Math.round((cmes / days + Number.EPSILON) * 1000000) / 1000000
+      : 0;
+  }
   if (c.totalCol || c.calculatedTotals) calculateTotal(o, c);
   if (activeKey === "chg") {
     if (!o["Año"]) return toast("El año es obligatorio");
@@ -635,13 +891,11 @@ function saveEdit(e) {
     if (!o[primaryDate]) return toast("La fecha es obligatoria");
   }
   if (editingId == null) {
-    o._id = Math.max(0, ...rows.map((r) => r._id)) + 1;
+    o._id = Math.max(0, ...rows.map((r) => Number(r._id) || 0)) + 1;
     rows.unshift(o);
-  } else
-    Object.assign(
-      rows.find((r) => r._id === editingId),
-      o,
-    );
+  } else {
+    Object.assign(rows.find((r) => r._id === editingId), o);
+  }
   stores[activeKey].rows = rows;
   $("editDialog").close();
   dirty();

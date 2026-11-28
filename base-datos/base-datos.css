@@ -2558,3 +2558,89 @@ body.dark .simulation-dialog {
   background: #0f172a;
   color: #f8fafc;
 }
+
+
+/* Tooltip de ayuda para campos con autocompletado */
+.field-with-tooltip {
+  position: relative;
+}
+.field-tooltip {
+  position: absolute;
+  left: 12px;
+  bottom: calc(100% - 18px);
+  z-index: 10000;
+  width: max-content;
+  max-width: min(360px, calc(100vw - 64px));
+  padding: 8px 10px;
+  border-radius: 7px;
+  background: #172033;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.35;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.24);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(4px);
+  transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s ease;
+}
+.field-tooltip::after {
+  content: "";
+  position: absolute;
+  left: 18px;
+  top: 100%;
+  border: 6px solid transparent;
+  border-top-color: #172033;
+}
+.field-with-tooltip:hover .field-tooltip,
+.field-with-tooltip:focus-within .field-tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+/* Listados de autocompletado */
+.autocomplete-box{position:relative;display:block;width:100%;margin-top:5px}
+.formGrid .autocomplete-box input{margin-top:0;padding-right:42px}
+.autocomplete-arrow{position:absolute;top:1px;right:1px;bottom:1px;width:38px;border:0;border-left:1px solid var(--line);border-radius:0 7px 7px 0;background:transparent;color:#334e68;cursor:pointer;z-index:3}
+.autocomplete-arrow:hover{background:#eef4fa}
+.autocomplete-menu{position:absolute;z-index:11000;top:calc(100% + 4px);left:0;right:0;display:none;max-height:240px;overflow-y:auto;padding:5px;border:1px solid #cbd5e1;border-radius:9px;background:#fff;box-shadow:0 14px 32px rgba(15,23,42,.2)}
+.autocomplete-menu.open{display:block}
+.autocomplete-option{display:block;width:100%;padding:9px 10px;border:0;border-radius:6px;background:transparent;color:#172033;text-align:left;font:500 13px Inter,Arial,sans-serif}
+.autocomplete-option:hover{background:#eef4fa;color:#0f5fbf}
+.autocomplete-empty{display:block;padding:9px 10px;color:#64748b;font-size:12px;font-weight:500;line-height:1.4}
+
+/* Correcciones de interacción del listado */
+.autocomplete-menu {
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  pointer-events: auto;
+}
+.autocomplete-menu::-webkit-scrollbar { width: 12px; }
+.autocomplete-menu::-webkit-scrollbar-track { background: #eef2f7; border-radius: 999px; }
+.autocomplete-menu::-webkit-scrollbar-thumb { background: #94a3b8; border: 2px solid #eef2f7; border-radius: 999px; }
+.autocomplete-menu::-webkit-scrollbar-thumb:hover { background: #64748b; }
+
+/* Refuerzo visual de campos calculados */
+.formGrid input[readonly],
+.formGrid input[aria-readonly="true"] {
+  background: #f1f5f9 !important;
+  color: #64748b !important;
+  cursor: not-allowed !important;
+  pointer-events: none;
+}
+
+/* Ajuste del listado Poblacion en CHG */
+body:has(.tab[data-dataset="chg"].active) #editFields .autocomplete-box {
+  position: relative;
+  width: 100%;
+}
+body:has(.tab[data-dataset="chg"].active) #editFields .autocomplete-menu {
+  left: 0;
+  right: 0;
+  width: 100%;
+  min-width: 100%;
+  max-height: 220px;
+  z-index: 12000;
+}
